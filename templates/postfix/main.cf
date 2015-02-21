@@ -60,7 +60,14 @@ smtpd_relay_restrictions =
     defer_unauth_destination
 
 virtual_alias_domains = {{ mta_domains | join(", ") }}
-virtual_alias_maps = {{ mta_virtual_maps | join(", ") }}
+virtual_alias_maps =
+{% for item in mta_virtual_maps %}
+{% if item is string %}
+    {{ item }}
+{% elif item is mapping %}
+    hash:/etc/postfix/virtual_{{ item.domain }}
+{% endif %}
+{% endfor %}
 
 message_size_limit = {{ mta_message_size_limit }}
 

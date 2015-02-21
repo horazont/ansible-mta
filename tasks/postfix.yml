@@ -21,6 +21,25 @@
   notify:
     - reload postfix
 
+- name: update virtual tables
+  template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
+  when: item is mapping
+  with_items: mta_virtual_maps
+  tags:
+    - postfix
+    - postfix_virtual_map
+  register: virtual_map_update
+
+- name: compiling virtual tables
+  command: postmap /etc/postfix/virtual_{{ item.item.domain }}
+  when: item | changed
+  with_items: virtual_map_update.results
+  notify:
+    - reload postfix
+  tags:
+    - postfix
+    - postfix_virtual_map
+
 - name: setup core firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   with_items:

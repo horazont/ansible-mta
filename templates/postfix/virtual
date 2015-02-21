@@ -1,0 +1,4 @@
+{{ '#' }} virtual table for domain {{ item.domain }}
+{% for entry in item.map|dictsort(by='key') %}
+{{ entry[0] }}@{{ item.domain }} {{ entry[1] }}
+{% endfor %}
