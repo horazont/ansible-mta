@@ -1,2 +1,4 @@
 ---
 - include: postfix.yml
+- include: opendkim.yml
+  when: mta_dkim
