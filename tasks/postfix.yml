@@ -1,0 +1,70 @@
+---
+# - name: set hostname
+#   command: hostnamectl --static set-hostname {{ inventory_hostname }}
+
+
+- name: install packages
+  yum: name={{ item }} state=latest
+  with_items:
+    - postfix
+  tags:
+    - postfix
+    - yum
+
+- name: instanciate config files
+  template: backup=yes dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
+  with_items:
+    - master.cf
+    - main.cf
+  tags:
+    - postfix
+  notify:
+    - reload postfix
+
+- name: setup core firewall service files
+  copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
+  with_items:
+    - smtpd
+  register: firewall_rule_copy1
+  tags:
+    - postfix
+    - firewall
+
+- name: setup submission firewall service files
+  copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
+  when: mta_msa
+  with_items:
+    - submission
+  register: firewall_rule_copy2
+  tags:
+    - postfix
+    - firewall
+
+- name: reload firewall
+  command: firewall-cmd --reload
+  when: (firewall_rule_copy1|changed) or (firewall_rule_copy2|changed)
+  tags:
+    - postfix
+    - firewall
+
+- name: enable core services in firewall
+  command: firewall-cmd --permanent --zone=public --add-service={{ item }}
+  with_items:
+    - smtpd
+  tags:
+    - postfix
+    - firewall
+
+- name: enable submission in firewall
+  command: firewall-cmd --permanent --zone=public --add-service={{ item }}
+  when: mta_msa
+  with_items:
+    - submission
+  tags:
+    - postfix
+    - firewall
+
+- name: start postfix
+  service: name=postfix state=started
+  tags:
+    - postfix

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>Mail Submission Agent listening service</short>
+  <description />
+  <port protocol="tcp" port="587" />
+</service>

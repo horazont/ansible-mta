@@ -1,0 +1,87 @@
+# defaults on fedora
+queue_directory = /var/spool/postfix
+command_directory = /usr/sbin
+daemon_directory = /usr/libexec/postfix
+data_directory = /var/lib/postfix
+mail_owner = postfix
+
+sendmail_path = /usr/sbin/sendmail.postfix
+newaliases_path = /usr/bin/newaliases.postfix
+mailq_path = /usr/bin/mailq.postfix
+setgid_group = postdrop
+html_directory = no
+manpage_directory = /usr/share/man
+sample_directory = /usr/share/doc/postfix/samples
+readme_directory = /usr/share/doc/postfix/README_FILES
+
+# configuration
+myhostname = {{ inventory_hostname }}
+myorigin = $myhostname
+
+{% if mta_is_destination -%}
+mydestination = $myhostname
+{%- endif %}
+
+inet_interfaces = all
+inet_protocols = all
+
+unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce else '550' }}
+soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
+
+{% if mta_relay_domains | default(False) -%}
+relay_domains = {{ mta_relay_domains | join(', ') }}
+{%- endif %}
+
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+{% if mta_local_delivery -%}
+home_mailbox = Maildir/
+mailbox_command = /usr/libexec/dovecot/deliver -f "$SENDER" -a "$RECIPIENT"
+{%- endif %}
+
+smtpd_use_tls = yes
+smtpd_tls_cert_file = {{ mta_tls.cert_file }}
+smtpd_tls_key_file = {{ mta_tls.key_file }}
+smtpd_tls_security_level = {{ mta_tls.security_level }}
+
+smtpd_client_restrictions =
+    reject_unknown_reverse_client_hostname
+
+smtpd_recipient_restrictions =
+    reject_unauth_destination,
+    check_sender_access hash:/etc/postfix/sender_access
+
+smtpd_relay_restrictions =
+    permit_mynetworks,
+{% if mta_auto_backup_mx | default(False) -%}
+    permit_mx_backup,
+{%- endif %}
+    defer_unauth_destination
+
+virtual_alias_domains = {{ mta_domains | join(", ") }}
+virtual_alias_maps = {{ mta_virtual_maps | join(", ") }}
+
+message_size_limit = {{ mta_message_size_limit }}
+
+{% if mta_postscreen | default(False) -%}
+postscreen_access_list = permit_mynetworks
+
+{% if mta_postscreen.greet -%}
+postscreen_greet_action = {{ mta_postscreen.greet.action }}
+{% if mta_postscreen.greet.banner -%}
+postscreen_greet_banner = {{ inventory_hostname }} {{ mta_postscreen.greet.banner }}
+{%- endif %}
+{%- endif %}
+
+{% if mta_postscreen.dnsbl -%}
+postscreen_dnsbl_sites = {{ mta_postscreen.dnsbl.sites | join(", ") }}
+postscreen_dnsbl_action = {{ mta_postscreen.dnsbl.action }}
+postscreen_dnsbl_threshold = {{ mta_postscreen.dnsbl.threshold }}
+{%- endif %}
+
+{%- endif %}
+
+{% if mta_delay_warning | default(False) -%}
+delay_warning_time = {{ mta_delay_warning }}
+{%- endif %}
