@@ -49,8 +49,7 @@ smtpd_client_restrictions =
     reject_unknown_reverse_client_hostname
 
 smtpd_recipient_restrictions =
-    reject_unauth_destination,
-    check_sender_access hash:/etc/postfix/sender_access
+    reject_unauth_destination
 
 smtpd_relay_restrictions =
     permit_mynetworks,
