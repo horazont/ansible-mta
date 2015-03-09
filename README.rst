@@ -111,6 +111,8 @@ TLS
 * ``mta_tls.key_file`` (string): Path to the TLS private key
 * ``mta_tls.security_level`` (string): Value of postfixs
   ``smtpd_tls_security_level``.
+* ``mta_tls.log`` (bool, default false): Enable logging of TLS connections,
+  e.g. for cipher statistics
 
 OpenDKIM
 --------
