@@ -3,13 +3,23 @@
 #   command: hostnamectl --static set-hostname {{ inventory_hostname }}
 
 
-- name: install packages
+- name: install packages via yum
   yum: name={{ item }} state=latest
+  when: "ansible_distribution in ['Fedora']"
   with_items:
     - postfix
   tags:
     - postfix
     - yum
+
+- name: install packages via apt
+  apt: name={{ item }} state=latest
+  when: "ansible_distribution in ['Ubuntu', 'Debian']"
+  with_items:
+    - postfix
+  tags:
+    - postfix
+    - apt
 
 - name: instanciate config files
   template: backup=yes dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
@@ -44,6 +54,7 @@
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   with_items:
     - smtpd
+  when: ansible_distribution in ['Fedora']
   register: firewall_rule_copy1
   tags:
     - postfix
@@ -51,7 +62,7 @@
 
 - name: setup submission firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
-  when: mta_msa
+  when: mta_msa and ansible_distribution in ['Fedora']
   with_items:
     - submission
   register: firewall_rule_copy2
@@ -68,6 +79,7 @@
 
 - name: enable core services in firewall
   command: firewall-cmd --permanent --zone=public --add-service={{ item }}
+  when: ansible_distribution in ['Fedora']
   with_items:
     - smtpd
   tags:
@@ -76,7 +88,7 @@
 
 - name: enable submission in firewall
   command: firewall-cmd --permanent --zone=public --add-service={{ item }}
-  when: mta_msa
+  when: mta_msa and ansible_distribution in ['Fedora']
   with_items:
     - submission
   tags:
