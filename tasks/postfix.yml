@@ -95,7 +95,7 @@
     - postfix
     - firewall
 
-- name: start postfix
-  service: name=postfix state=started
+- name: start and enable postfix
+  service: name=postfix state=started enabled=yes
   tags:
     - postfix
