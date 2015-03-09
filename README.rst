@@ -58,23 +58,23 @@ Accepting mail
   and relay mail for domains for which it is listed in a MX record (via
   ``permit_mx_backup``).
 
-Local delivery
---------------
-
 * ``mta_virtual_maps`` (list of things). The things can either be strings, in
   which case they are taken verbatimly in the ``virtual_alias_maps`` parameter
   of postfix. Otherwise, they must be hashes with the following characteristics:
 
   * ``thing.domain`` (string): The domain for which this mapping shall be used
   * ``thing.map`` (mapping from localparts to strings): The mapping from the
-    localpart to the delivery destination.
+    localpart to the delivery destination. The values may also be lists of
+    strings, which will be joined with ``,``.
 
   Example::
 
     mta_virtual_maps:
       - domain: foo.example
         map:
-          postmaster: fred
+          postmaster:
+           - fred
+           - juliet
           webmaster: root
           sales: sales@bar.example
 

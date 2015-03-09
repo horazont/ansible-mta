@@ -1,4 +1,4 @@
 {{ '#' }} virtual table for domain {{ item.domain }}
 {% for entry in item.map|dictsort(by='key') %}
-{{ entry[0] }}@{{ item.domain }} {{ entry[1] }}
+{{ entry[0] }}@{{ item.domain }} {{ entry[1] if entry[1] is string else (entry[1] | join(", ")) }}
 {% endfor %}
