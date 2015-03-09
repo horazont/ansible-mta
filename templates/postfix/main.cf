@@ -20,9 +20,25 @@ myorigin = $myhostname
 
 {% if mta_is_destination -%}
 mydestination = $myhostname
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+{% else %}
+mydestination =
+# reject all mail
+local_transport = error:5.1.1 Mailbox unavailable
+local_recipient_maps =
+alias_maps =
+alias_database =
+home_mailbox = Maildir/
+mailbox_command = /usr/libexec/dovecot/deliver -f "$SENDER" -a "$RECIPIENT"
 {%- endif %}
 
+{% if mta_listen | default(True) %}
 inet_interfaces = all
+{% else %}
+inet_interfaces = loopback-only
+master_service_disable = inet
+{% endif %}
 inet_protocols = all
 
 unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce else '550' }}
@@ -32,18 +48,13 @@ soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
 relay_domains = {{ mta_relay_domains | join(', ') }}
 {%- endif %}
 
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
-
-{% if mta_local_delivery -%}
-home_mailbox = Maildir/
-mailbox_command = /usr/libexec/dovecot/deliver -f "$SENDER" -a "$RECIPIENT"
-{%- endif %}
-
+{% if mta_listen | default(True) %}
 smtpd_use_tls = yes
 smtpd_tls_cert_file = {{ mta_tls.cert_file }}
 smtpd_tls_key_file = {{ mta_tls.key_file }}
 smtpd_tls_security_level = {{ mta_tls.security_level }}
+smtpd_tls_exclude_ciphers = EXPORT, LOW
+{% endif %}
 
 smtpd_client_restrictions =
     reject_unknown_reverse_client_hostname
@@ -58,6 +69,7 @@ smtpd_relay_restrictions =
 {%- endif %}
     defer_unauth_destination
 
+{% if mta_domains | default(False) -%}
 virtual_alias_domains = {{ mta_domains | join(", ") }}
 virtual_alias_maps =
 {% for item in mta_virtual_maps %}
@@ -67,8 +79,11 @@ virtual_alias_maps =
     hash:/etc/postfix/virtual_{{ item.domain }}
 {% endif %}
 {% endfor %}
+{% endif %}
 
+{% if mta_message_size_limit | default(False) -%}
 message_size_limit = {{ mta_message_size_limit }}
+{% endif %}
 
 {% if mta_postscreen | default(False) -%}
 postscreen_access_list = permit_mynetworks

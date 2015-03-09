@@ -11,8 +11,14 @@ Accepting mail
   parameter will be set to ``$myhostname``. This is required to accept mail
   for local delivery.
 
+  In addition, if false, local delivery will be shunted to a ``5.1.1`` error.
+
+* ``mta_listen`` (bool, default true): if true, postfix will be configured to
+  listen on port 25 for incoming connections.
+
 * ``mta_domains`` (list of strings): the list of domains for which the MTA shall
-  accept mail.
+  accept mail. This is independent from ``mta_is_destination`` -- domains may be
+  purely for forwarding purposes.
 
 * ``mta_message_size_limit`` (integer): Maximum size for a message in bytes to
   be accepted for delivery (on either service, smtpd or submission)
@@ -54,9 +60,6 @@ Accepting mail
 
 Local delivery
 --------------
-
-* ``mta_local_delivery`` (bool): If true, the local delivery is configured to
-  use dovecot. Otherwise, local delivery is unconfigured.
 
 * ``mta_virtual_maps`` (list of things). The things can either be strings, in
   which case they are taken verbatimly in the ``virtual_alias_maps`` parameter
