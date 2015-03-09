@@ -56,6 +56,8 @@ smtpd_tls_security_level = {{ mta_tls.security_level }}
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}
 
+smtp_tls_security_level = may
+
 {% if mta_tls | default(False) and mta_tls.log | default(False) -%}
 smtp_tls_loglevel = 1
 smtpd_tls_loglevel = 1
