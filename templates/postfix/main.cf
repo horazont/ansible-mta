@@ -1,5 +1,5 @@
 # configuration
-myhostname = {{ inventory_hostname }}
+myhostname = {{ mta_override_hostname | default(inventory_hostname) }}
 myorigin = $myhostname
 
 {% if mta_is_destination -%}
