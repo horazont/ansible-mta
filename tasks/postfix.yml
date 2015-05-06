@@ -31,16 +31,22 @@
   notify:
     - reload postfix
 
-- name: update alias table
-  template: src=postfix/aliases dest=/etc/aliases
+- name: update alias tables
+  template: src=postfix/aliases
+            dest={{ item.file }}
+            mode="{{ item.mode | default('ug=rw,o=r') }}"
+            owner={{ item.owner | default("root") }}
+            group={{ item.group | default("group") }}
+  with_items: mta_alias_maps
   tags:
     - postfix
     - postfix_virtual_map
   register: alias_map_update
 
-- name: compile alias table
-  command: postalias /etc/aliases
-  when: alias_map_update | changed
+- name: compile alias tables
+  command: postalias {{ item.item.file }}
+  when: item | changed
+  with_items: alias_map_update.results
   notify:
     - reload postfix
   tags:

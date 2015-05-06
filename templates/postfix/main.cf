@@ -10,10 +10,13 @@ mydestination = $myhostname
 mydestination =
 {% endif %}
 
-{% if mta_is_destination and (mta_alias_map | default(False)) %}
-# mta_is_destination is true and mta_alias_map is set
-alias_maps = hash:/etc/aliases
-alias_database = hash:/etc/aliases
+{% if mta_is_destination and (mta_alias_maps | default(False)) %}
+# mta_is_destination is true and mta_alias_maps is set
+alias_databases =
+{% for item in mta_alias_maps %}
+  hash:{{ item.file }}
+{% endfor %}
+alias_maps = $alias_databases
 {% else %}
 # mta_is_destination is false or mta_alias_map is unset, reject all mail
 # (no sensible destinations)

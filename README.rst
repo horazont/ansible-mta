@@ -11,11 +11,30 @@ Accepting mail
   parameter will be set to ``$myhostname``. This is required to accept mail
   for local delivery.
 
-* ``mta_alias_map`` (mapping): map local aliases to user names or pipes or
-  remote mail addresses.
+* ``mta_alias_maps`` (list of things): map local aliases to user names or pipes
+  or remote mail addresses.
 
-  If ``mta_alias_map`` is false or empty, or ``mta_is_destination`` is false,
+  If ``mta_alias_maps`` is false or empty, or ``mta_is_destination`` is false,
   local delivery will be shunted to a ``5.1.1`` error.
+
+  Each thing in the list can have the following attributes:
+
+  * ``thing.file`` (required, string): Path to the file where the alias map is
+    stored. Usually, one of the things should be managing ``/etc/aliases``.
+  * ``thing.map`` (mapping of addresess to targets): This works like the map in
+    ``mta_virtual_maps``.
+  * ``thing.owner`` (optional, user name): The UNIX user which will own the
+    file. This has semantics with Postfix, namely piped commands will be
+    executed under the user and group to which the file belongs, if its not
+    UID 0.
+  * ``thing.group`` (optional, group name): The UNIX group to which the file
+    will belong. See above for details.
+  * ``thing.mode`` (optional, chmod-compatible mode specfication): The mode to
+    use for the aliases file.
+
+  Note that using a restrictive mode (e.g. no write permissions for the owning
+  user) may not properly work, as the postalias command must be able to write
+  in the same directory and will do so as the user to which the file belongs.
 
 * ``mta_listen`` (bool, default true): if true, postfix will be configured to
   listen on port 25 for incoming connections.
