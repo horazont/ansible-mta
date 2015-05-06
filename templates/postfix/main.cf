@@ -26,8 +26,10 @@ mailbox_command = /usr/libexec/dovecot/deliver -f "$SENDER" -a "$RECIPIENT"
 {%- endif %}
 
 {% if mta_listen | default(True) %}
+# mta_listen is true
 inet_interfaces = all
 {% else %}
+# mta_listen is false
 inet_interfaces = loopback-only
 master_service_disable = inet
 {% endif %}
@@ -37,10 +39,12 @@ unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce else '550' }}
 soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
 
 {% if mta_relay_domains | default(False) -%}
+# origin: mta_relay_domains
 relay_domains = {{ mta_relay_domains | join(', ') }}
 {%- endif %}
 
 {% if mta_listen | default(True) %}
+# origin: mta_listen (requires mta_tls, which is used here)
 smtpd_use_tls = yes
 smtpd_tls_cert_file = {{ mta_tls.cert_file }}
 smtpd_tls_key_file = {{ mta_tls.key_file }}
@@ -51,6 +55,7 @@ smtpd_tls_exclude_ciphers = EXPORT, LOW
 smtp_tls_security_level = may
 
 {% if mta_tls | default(False) and mta_tls.log | default(False) -%}
+# origin: mta_tls.log
 smtp_tls_loglevel = 1
 smtpd_tls_loglevel = 1
 {% endif %}
@@ -69,7 +74,9 @@ smtpd_relay_restrictions =
     defer_unauth_destination
 
 {% if mta_domains | default(False) -%}
+# origin: mta_domains (requires mta_virtual_maps)
 virtual_alias_domains = {{ mta_domains | join(", ") }}
+# origin: mta_virtual_maps
 virtual_alias_maps =
 {% for item in mta_virtual_maps %}
 {% if item is string %}
@@ -81,20 +88,25 @@ virtual_alias_maps =
 {% endif %}
 
 {% if mta_message_size_limit | default(False) -%}
+# origin: mta_message_size_limit
 message_size_limit = {{ mta_message_size_limit }}
 {% endif %}
 
 {% if mta_postscreen | default(False) -%}
+# origin: mta_postscreen
 postscreen_access_list = permit_mynetworks
 
 {% if mta_postscreen.greet -%}
+# origin: mta_postscreen.greet
 postscreen_greet_action = {{ mta_postscreen.greet.action }}
 {% if mta_postscreen.greet.banner -%}
+# origin: mta_postscreen.greet.banner
 postscreen_greet_banner = {{ inventory_hostname }} {{ mta_postscreen.greet.banner }}
 {%- endif %}
 {%- endif %}
 
 {% if mta_postscreen.dnsbl -%}
+# origin: mta_postscreen.dnsbl
 postscreen_dnsbl_sites = {{ mta_postscreen.dnsbl.sites | join(", ") }}
 postscreen_dnsbl_action = {{ mta_postscreen.dnsbl.action }}
 postscreen_dnsbl_threshold = {{ mta_postscreen.dnsbl.threshold }}
@@ -103,5 +115,6 @@ postscreen_dnsbl_threshold = {{ mta_postscreen.dnsbl.threshold }}
 {%- endif %}
 
 {% if mta_delay_warning | default(False) -%}
+# origin: mta_delay_warning
 delay_warning_time = {{ mta_delay_warning }}
 {%- endif %}
