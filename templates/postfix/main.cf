@@ -3,12 +3,20 @@ myhostname = {{ mta_override_hostname | default(inventory_hostname) }}
 myorigin = $myhostname
 
 {% if mta_is_destination -%}
+# mta_is_destination = True
 mydestination = $myhostname
+{% else %}
+# mta_is_destination = False
+mydestination =
+{% endif %}
+
+{% if mta_is_destination and (mta_alias_map | default(False)) %}
+# mta_is_destination is true and mta_alias_map is set
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 {% else %}
-mydestination =
-# reject all mail
+# mta_is_destination is false or mta_alias_map is unset, reject all mail
+# (no sensible destinations)
 local_transport = error:5.1.1 Mailbox unavailable
 local_recipient_maps =
 alias_maps =

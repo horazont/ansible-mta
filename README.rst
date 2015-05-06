@@ -11,7 +11,11 @@ Accepting mail
   parameter will be set to ``$myhostname``. This is required to accept mail
   for local delivery.
 
-  In addition, if false, local delivery will be shunted to a ``5.1.1`` error.
+* ``mta_alias_map`` (mapping): map local aliases to user names or pipes or
+  remote mail addresses.
+
+  If ``mta_alias_map`` is false or empty, or ``mta_is_destination`` is false,
+  local delivery will be shunted to a ``5.1.1`` error.
 
 * ``mta_listen`` (bool, default true): if true, postfix will be configured to
   listen on port 25 for incoming connections.

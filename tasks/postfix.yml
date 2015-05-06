@@ -31,6 +31,22 @@
   notify:
     - reload postfix
 
+- name: update alias table
+  template: src=postfix/aliases dest=/etc/aliases
+  tags:
+    - postfix
+    - postfix_virtual_map
+  register: alias_map_update
+
+- name: compile alias table
+  command: postalias /etc/aliases
+  when: alias_map_update | changed
+  notify:
+    - reload postfix
+  tags:
+    - postfix
+    - postfix_virtual_map
+
 - name: update virtual tables
   template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
   when: item is mapping
@@ -40,7 +56,7 @@
     - postfix_virtual_map
   register: virtual_map_update
 
-- name: compiling virtual tables
+- name: compile virtual tables
   command: postmap /etc/postfix/virtual_{{ item.item.domain }}
   when: item | changed
   with_items: virtual_map_update.results
