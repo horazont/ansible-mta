@@ -25,6 +25,7 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_client_restrictions={{ mta_msa.client_restrictions | join(",") }}
   -o smtpd_recipient_restrictions=
+  -o smtpd_relay_restrictions=permit_sasl_authenticated,defer_unauth_destination
 {% if mta_msa.sasl | default(False) %}
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_sasl_type={{ mta_msa.sasl.type }}
