@@ -152,8 +152,8 @@ TLS
 OpenDKIM
 --------
 
-If ``mta_dkim`` is not false, OpenDKIM is installed and configured. In that
-case, the following settings apply:
+``mta_dkim`` (bool, default false): If not false, OpenDKIM is installed and
+configured. In that case, the following settings apply:
 
 * ``mta_dkim.sign`` (bool): Whether the OpenDKIM milter shall sign mail for the
   domains listed in ``mta_dkim.domains``.

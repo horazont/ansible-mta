@@ -1,4 +1,4 @@
 ---
 - include: postfix.yml
 - include: opendkim.yml
-  when: mta_dkim
+  when: mta_dkim | default(False)
