@@ -36,7 +36,7 @@
             dest={{ item.file }}
             mode="{{ item.mode | default('ug=rw,o=r') }}"
             owner={{ item.owner | default("root") }}
-            group={{ item.group | default("group") }}
+            group={{ item.group | default("root") }}
   with_items: mta_alias_maps
   tags:
     - postfix
