@@ -101,6 +101,13 @@ Accepting mail
           webmaster: root
           sales: sales@bar.example
 
+* ``mta_relayhost`` (string):  If set, postfix will relay non-local mail through
+  this destination.  Refer to the `postfix documentation on the relayhost
+  directive`__ for details.
+
+  __ http://www.postfix.org/postconf.5.html#relayhost
+
+
 Mail submission agent
 ---------------------
 
