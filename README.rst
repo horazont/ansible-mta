@@ -174,9 +174,9 @@ case, the following settings apply:
 Safety nets and misc
 --------------------
 
-* ``mta_soft_bounce`` (bool): if true, ``soft_bounce`` is enabled. In that case,
-  postfix will return temporary error codes instead of permanent if local
-  delivery fails due to unknown users.
+* ``mta_soft_bounce`` (bool, default false): if true, ``soft_bounce`` is
+  enabled. In that case, postfix will return temporary error codes instead of
+  permanent if local delivery fails due to unknown users.
 
 * ``mta_delay_warning`` (string, optional): If set, this is the value of the
   ``delay_warning_time`` setting of postfix.

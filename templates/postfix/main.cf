@@ -38,8 +38,8 @@ master_service_disable = inet
 {% endif %}
 inet_protocols = all
 
-unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce else '550' }}
-soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
+unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce | default(False) else '550' }}
+soft_bounce = {{ 'yes' if mta_soft_bounce | default(False) else 'no' }}
 
 {% if mta_relay_domains | default(False) -%}
 # origin: mta_relay_domains
