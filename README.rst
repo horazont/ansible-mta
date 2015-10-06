@@ -107,6 +107,11 @@ Accepting mail
 
   __ http://www.postfix.org/postconf.5.html#relayhost
 
+  This setting is useful to achieve a “satellite system” type of setup in which
+  all mail is relayed through another server instead of being delivered
+  directly; it will typically be used for MTAs that only need to send cron mails
+  etc.
+
 
 Mail submission agent
 ---------------------
