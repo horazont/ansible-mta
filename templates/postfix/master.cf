@@ -10,7 +10,7 @@
 #               (yes)   (yes)   (yes)   (never) (100)
 # ==========================================================================
 {% if mta_listen | default(True) %}
-{% if mta_postscreen %}
+{% if mta_postscreen | default(False) %}
 smtp      inet  n       -       n       -       1       postscreen
 smtpd     pass  -       -       n       -       -       smtpd
 dnsblog   unix  -       -       n       -       0       dnsblog
