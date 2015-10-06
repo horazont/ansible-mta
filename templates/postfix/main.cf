@@ -51,7 +51,7 @@ relay_domains = {{ mta_relay_domains | join(', ') }}
 smtpd_use_tls = yes
 smtpd_tls_cert_file = {{ mta_tls.cert_file }}
 smtpd_tls_key_file = {{ mta_tls.key_file }}
-smtpd_tls_security_level = {{ mta_tls.security_level }}
+smtpd_tls_security_level = {{ mta_tls.security_level | default("may") }}
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}
 
