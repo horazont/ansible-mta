@@ -112,6 +112,18 @@ Accepting mail
   directly; it will typically be used for MTAs that only need to send cron mails
   etc.
 
+* ``mta_transport_map`` (mapping):  A lookup table, mapping destination
+  address patterns to their respective nexthop.  Refer to the `postfix
+  transport(5) manual`__ for details on the format of this table.
+
+  __ http://www.postfix.org/transport.5.html
+
+  Example::
+
+    mta_transport_map:
+      "example.com": "smtp:server-1.example.com"
+      "example.org": "smtp:server-1.example.org"
+
 
 Mail submission agent
 ---------------------

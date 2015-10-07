@@ -72,6 +72,22 @@
     - postfix
     - postfix_virtual_map
 
+- name: update transport map
+  template: src=postfix/transport_map dest=/etc/postfix/transports
+  when: mta_transport_map is mapping
+  tags:
+    - postfix
+    - postfix_transport_map
+  register: postfix_transport_map
+
+- name: compile transport map
+  command: postmap /etc/postfix/transports
+  when: postfix_transport_map | changed
+  with_items: postfix_transport_map.results
+  tags:
+    - postfix
+    - postfix_transport_map
+
 - name: setup core firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   with_items:

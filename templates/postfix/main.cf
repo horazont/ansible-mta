@@ -46,6 +46,11 @@ soft_bounce = {{ 'yes' if mta_soft_bounce | default(False) else 'no' }}
 relay_domains = {{ mta_relay_domains | join(', ') }}
 {%- endif %}
 
+{% if mta_transport_map | default(False) -%}
+# origin: mta_transport_map
+transport_maps = hash:/etc/postfix/transports
+{%- endif %}
+
 {% if mta_listen | default(True) %}
 # origin: mta_listen (requires mta_tls, which is used here)
 smtpd_use_tls = yes
