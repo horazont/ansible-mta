@@ -156,8 +156,11 @@ TLS
 
 * ``mta_tls.cert_file`` (string): Path to the TLS certificate
 * ``mta_tls.key_file`` (string): Path to the TLS private key
-* ``mta_tls.security_level`` (string): Value of postfixs
-  ``smtpd_tls_security_level``.
+* ``mta_tls.security_level`` (string, default "may"): Value of postfix’s
+  `smtpd_tls_security_level`__ directive.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_tls_security_level
+
 * ``mta_tls.log`` (bool, default false): Enable logging of TLS connections,
   e.g. for cipher statistics
 
