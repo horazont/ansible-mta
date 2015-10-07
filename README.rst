@@ -101,6 +101,30 @@ Accepting mail
           webmaster: root
           sales: sales@bar.example
 
+* ``mta_relayhost`` (string):  If set, postfix will relay non-local mail through
+  this destination.  Refer to the `postfix documentation on the relayhost
+  directive`__ for details.
+
+  __ http://www.postfix.org/postconf.5.html#relayhost
+
+  This setting is useful to achieve a “satellite system” type of setup in which
+  all mail is relayed through another server instead of being delivered
+  directly; it will typically be used for MTAs that only need to send cron mails
+  etc.
+
+* ``mta_transport_map`` (mapping):  A lookup table, mapping destination
+  address patterns to their respective nexthop.  Refer to the `postfix
+  transport(5) manual`__ for details on the format of this table.
+
+  __ http://www.postfix.org/transport.5.html
+
+  Example::
+
+    mta_transport_map:
+      "example.com": "smtp:server-1.example.com"
+      "example.org": "smtp:server-1.example.org"
+
+
 Mail submission agent
 ---------------------
 
@@ -132,16 +156,19 @@ TLS
 
 * ``mta_tls.cert_file`` (string): Path to the TLS certificate
 * ``mta_tls.key_file`` (string): Path to the TLS private key
-* ``mta_tls.security_level`` (string): Value of postfixs
-  ``smtpd_tls_security_level``.
+* ``mta_tls.security_level`` (string, default "may"): Value of postfix’s
+  `smtpd_tls_security_level`__ directive.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_tls_security_level
+
 * ``mta_tls.log`` (bool, default false): Enable logging of TLS connections,
   e.g. for cipher statistics
 
 OpenDKIM
 --------
 
-If ``mta_dkim`` is not false, OpenDKIM is installed and configured. In that
-case, the following settings apply:
+``mta_dkim`` (mapping or false, default false): If not false, OpenDKIM is
+installed and configured. In that case, the following settings apply:
 
 * ``mta_dkim.sign`` (bool): Whether the OpenDKIM milter shall sign mail for the
   domains listed in ``mta_dkim.domains``.
@@ -162,9 +189,9 @@ case, the following settings apply:
 Safety nets and misc
 --------------------
 
-* ``mta_soft_bounce`` (bool): if true, ``soft_bounce`` is enabled. In that case,
-  postfix will return temporary error codes instead of permanent if local
-  delivery fails due to unknown users.
+* ``mta_soft_bounce`` (bool, default false): if true, ``soft_bounce`` is
+  enabled. In that case, postfix will return temporary error codes instead of
+  permanent if local delivery fails due to unknown users.
 
 * ``mta_delay_warning`` (string, optional): If set, this is the value of the
   ``delay_warning_time`` setting of postfix.

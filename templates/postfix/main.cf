@@ -38,12 +38,17 @@ master_service_disable = inet
 {% endif %}
 inet_protocols = all
 
-unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce else '550' }}
-soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
+unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce | default(False) else '550' }}
+soft_bounce = {{ 'yes' if mta_soft_bounce | default(False) else 'no' }}
 
 {% if mta_relay_domains | default(False) -%}
 # origin: mta_relay_domains
 relay_domains = {{ mta_relay_domains | join(', ') }}
+{%- endif %}
+
+{% if mta_transport_map | default(False) -%}
+# origin: mta_transport_map
+transport_maps = hash:/etc/postfix/transports
 {%- endif %}
 
 {% if mta_listen | default(True) %}
@@ -51,7 +56,7 @@ relay_domains = {{ mta_relay_domains | join(', ') }}
 smtpd_use_tls = yes
 smtpd_tls_cert_file = {{ mta_tls.cert_file }}
 smtpd_tls_key_file = {{ mta_tls.key_file }}
-smtpd_tls_security_level = {{ mta_tls.security_level }}
+smtpd_tls_security_level = {{ mta_tls.security_level | default("may") }}
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}
 
@@ -120,4 +125,9 @@ postscreen_dnsbl_threshold = {{ mta_postscreen.dnsbl.threshold }}
 {% if mta_delay_warning | default(False) -%}
 # origin: mta_delay_warning
 delay_warning_time = {{ mta_delay_warning }}
+{%- endif %}
+
+{% if mta_relayhost | default(False) -%}
+# origin: mta_relayhost
+relayhost = {{ mta_relayhost }}
 {%- endif %}
