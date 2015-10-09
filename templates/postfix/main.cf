@@ -72,6 +72,12 @@ smtpd_tls_loglevel = 1
 mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
+{% if mta_is_destination -%}
+# origin: mta_smtpd_helo_required
+smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required | default(False) else "no" }}
+# origin: mta_strict_rfc821_envelopes
+strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes | default(False) else "no" }}
+
 # origin: mta_smtpd_helo_restrictions
 smtpd_helo_restrictions =
 {% for restriction in mta_smtpd_helo_restrictions | default([]) %}
@@ -88,6 +94,7 @@ smtpd_relay_restrictions =
 {% if mta_auto_backup_mx | default(False) -%}
     permit_mx_backup,
 {%- endif %}
+<<<<<<< HEAD
     reject_unauth_destination
 
 {% if mta_is_destination -%}
@@ -95,6 +102,9 @@ smtpd_relay_restrictions =
 smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required | default(False) else "no" }}
 # origin: mta_strict_rfc821_envelopes
 strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes | default(False) else "no" }}
+=======
+    defer_unauth_destination
+>>>>>>> Disable more unnecessary option when mta is not destination
 {% endif %}
 
 {% if mta_domains | default(False) -%}
