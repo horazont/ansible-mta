@@ -154,6 +154,16 @@ Accepting mail
 
   __ http://www.postfix.org/postconf.5.html#smtpd_sender_restrictions
 
+* ``mta_smtpd_recipient_restrictions`` (list of strings, default
+  ``["reject_unauth_destination"]``): Add recipient restrictions for the server
+  to apply.  See `smtpd_recipient_restrictions`__.
+
+  **Note:**  When overriding the default value, make sure to include *at least*
+  ``reject_unauth_destination`` in your list of restrictions to prevent your MTA
+  from becoming an open relay!
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_recipient_restrictions
+
 
 Mail submission agent
 ---------------------
