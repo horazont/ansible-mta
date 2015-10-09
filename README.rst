@@ -135,6 +135,9 @@ Accepting mail
       "example.com": "smtp:server-1.example.com"
       "example.org": "smtp:server-1.example.org"
 
+* ``mta_smtpd_helo_required`` (bool, default false):  Require that a remote SMTP
+  client introduces itself with the HELO or EHLO command before sending the MAIL
+  command or other commands that require EHLO negotiation.
 
 Mail submission agent
 ---------------------

@@ -84,6 +84,9 @@ smtpd_relay_restrictions =
 {%- endif %}
     reject_unauth_destination
 
+# origin: mta_smtpd_helo_required
+smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required | default(False) else "no" }}
+
 {% if mta_domains | default(False) -%}
 # origin: mta_domains (requires mta_virtual_maps)
 virtual_alias_domains = {{ mta_domains | join(", ") }}
