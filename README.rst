@@ -149,6 +149,11 @@ Accepting mail
 
   __ http://www.postfix.org/postconf.5.html#smtpd_helo_restrictions
 
+* ``mta_smtpd_sender_restrictions`` (list of strings, default empty): Add
+  sender restrictions for the server to apply.  See `smtpd_sender_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_sender_restrictions
+
 
 Mail submission agent
 ---------------------
