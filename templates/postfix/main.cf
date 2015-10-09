@@ -90,21 +90,20 @@ smtpd_sender_restrictions =
     {{ restriction }}{{ "," if not loop.last else "" }}
 {% endfor %}
 
+# origin: mta_smtpd_relay_restrictions
+smtpd_relay_restrictions =
+{% for restriction in mta_smtpd_relay_restrictions | default(["reject_unauth_destination"]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
 # origin: mta_smtpd_recipient_restrictions
 smtpd_recipient_restrictions =
-{% for restriction in mta_smtpd_recipient_restrictions | default(["reject_unauth_destination"]) %}
+{% for restriction in mta_smtpd_recipient_restrictions | default([]) %}
     {{ restriction }}{{ "," if not loop.last else "" }}
 {% endfor %}
 
 smtpd_client_restrictions =
     reject_unknown_reverse_client_hostname
-
-smtpd_relay_restrictions =
-    permit_mynetworks,
-{% if mta_auto_backup_mx | default(False) -%}
-    permit_mx_backup,
-{%- endif %}
-    reject_unauth_destination
 
 {% endif %}
 
