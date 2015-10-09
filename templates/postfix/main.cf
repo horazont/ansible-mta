@@ -86,6 +86,8 @@ smtpd_relay_restrictions =
 
 # origin: mta_smtpd_helo_required
 smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required | default(False) else "no" }}
+# origin: mta_strict_rfc821_envelopes
+strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes | default(False) else "no" }}
 
 {% if mta_domains | default(False) -%}
 # origin: mta_domains (requires mta_virtual_maps)

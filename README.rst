@@ -139,6 +139,12 @@ Accepting mail
 
   __ http://www.postfix.org/postconf.5.html#smtpd_helo_required
 
+
+* ``mta_strict_rfc821_envelopes`` (bool, default false): `strict_rfc821_envelopes`__
+
+  __ http://www.postfix.org/postconf.5.html#strict_rfc821_envelopes
+
+
 Mail submission agent
 ---------------------
 
