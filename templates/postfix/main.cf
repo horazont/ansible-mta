@@ -72,6 +72,12 @@ smtpd_tls_loglevel = 1
 mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
+# origin: mta_smtpd_helo_restrictions
+smtpd_helo_restrictions =
+{% for restriction in mta_smtpd_helo_restrictions | default([]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
 smtpd_client_restrictions =
     reject_unknown_reverse_client_hostname
 

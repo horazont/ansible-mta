@@ -144,6 +144,11 @@ Accepting mail
 
   __ http://www.postfix.org/postconf.5.html#strict_rfc821_envelopes
 
+* ``mta_smtpd_helo_restrictions`` (list of strings, default empty): Add
+  HELO restrictions for the server to apply.  See `smtpd_helo_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_helo_restrictions
+
 
 Mail submission agent
 ---------------------
