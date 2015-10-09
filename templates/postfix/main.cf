@@ -73,6 +73,11 @@ mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
 {% if mta_is_destination -%}
+smtpd_client_restrictions =
+{% for restriction in mta_smtpd_client_restrictions | default([]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
 # origin: mta_smtpd_helo_required
 smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required | default(False) else "no" }}
 # origin: mta_strict_rfc821_envelopes
@@ -101,9 +106,6 @@ smtpd_recipient_restrictions =
 {% for restriction in mta_smtpd_recipient_restrictions | default([]) %}
     {{ restriction }}{{ "," if not loop.last else "" }}
 {% endfor %}
-
-smtpd_client_restrictions =
-    reject_unknown_reverse_client_hostname
 
 {% endif %}
 

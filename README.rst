@@ -131,6 +131,12 @@ Accepting mail
       "example.com": "smtp:server-1.example.com"
       "example.org": "smtp:server-1.example.org"
 
+* ``mta_smtpd_client_restrictions`` (list of strings, default empty):
+  Add client restrictions for the server to apply.  See
+  `smtpd_client_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_client_restrictions
+
 * ``mta_smtpd_helo_required`` (bool, default false):  `smtpd_helo_required`__
 
   __ http://www.postfix.org/postconf.5.html#smtpd_helo_required
