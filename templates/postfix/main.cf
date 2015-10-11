@@ -104,7 +104,7 @@ message_size_limit = {{ mta_message_size_limit }}
 # origin: mta_postscreen
 postscreen_access_list = permit_mynetworks
 
-{% if mta_postscreen.greet -%}
+{% if mta_postscreen.greet | default(False) -%}
 # origin: mta_postscreen.greet
 postscreen_greet_action = {{ mta_postscreen.greet.action }}
 {% if mta_postscreen.greet.banner | default(False) -%}
@@ -113,7 +113,7 @@ postscreen_greet_banner = {{ inventory_hostname }} {{ mta_postscreen.greet.banne
 {%- endif %}
 {%- endif %}
 
-{% if mta_postscreen.dnsbl -%}
+{% if mta_postscreen.dnsbl | default(False) -%}
 # origin: mta_postscreen.dnsbl
 postscreen_dnsbl_sites = {{ mta_postscreen.dnsbl.sites | join(", ") }}
 postscreen_dnsbl_action = {{ mta_postscreen.dnsbl.action }}
