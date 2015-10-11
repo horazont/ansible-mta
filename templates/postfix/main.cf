@@ -107,7 +107,7 @@ postscreen_access_list = permit_mynetworks
 {% if mta_postscreen.greet -%}
 # origin: mta_postscreen.greet
 postscreen_greet_action = {{ mta_postscreen.greet.action }}
-{% if mta_postscreen.greet.banner -%}
+{% if mta_postscreen.greet.banner | default(False) -%}
 # origin: mta_postscreen.greet.banner
 postscreen_greet_banner = {{ inventory_hostname }} {{ mta_postscreen.greet.banner }}
 {%- endif %}
