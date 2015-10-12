@@ -30,7 +30,7 @@ mailbox_command = /usr/libexec/dovecot/deliver -f "$SENDER" -a "$RECIPIENT"
 
 {% if mta_listen | default(True) %}
 # mta_listen is true
-inet_interfaces = all
+inet_interfaces = {{ mta_listen_interfaces | default(["all"]) | join(", ") }}
 {% else %}
 # mta_listen is false
 inet_interfaces = loopback-only
@@ -68,18 +68,21 @@ smtp_tls_loglevel = 1
 smtpd_tls_loglevel = 1
 {% endif %}
 
+{% if mta_mynetworks | default(False) %}
+mynetworks = {{ mta_mynetworks | join(", ") }}
+{% endif %}
+
 smtpd_client_restrictions =
     reject_unknown_reverse_client_hostname
 
 smtpd_recipient_restrictions =
-    reject_unauth_destination
 
 smtpd_relay_restrictions =
     permit_mynetworks,
 {% if mta_auto_backup_mx | default(False) -%}
     permit_mx_backup,
 {%- endif %}
-    defer_unauth_destination
+    reject_unauth_destination
 
 {% if mta_domains | default(False) -%}
 # origin: mta_domains (requires mta_virtual_maps)
@@ -130,4 +133,11 @@ delay_warning_time = {{ mta_delay_warning }}
 {% if mta_relayhost | default(False) -%}
 # origin: mta_relayhost
 relayhost = {{ mta_relayhost }}
-{%- endif %}
+{% if mta_relayhost_auth | default(False) -%}
+# origin: mta_relayhost and mta_relayhost_auth
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:{{ mta_relayhost_auth.mapfile }}
+smtp_sasl_mechansim_filter =
+smtp_sasl_security_options =
+{% endif %}
+{% endif %}

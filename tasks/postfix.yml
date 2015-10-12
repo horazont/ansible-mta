@@ -88,6 +88,24 @@
     - postfix
     - postfix_transport_map
 
+- name: deploy sasl password map for relaying
+  template: src=postfix/password_map
+            dest="{{ mta_relayhost_auth.mapfile }}"
+  when: (mta_relayhost | default(False)) and (mta_relayhost_auth | default(False))
+  register: password_map
+  notify:
+    - reload postfix
+  tags:
+    - postfix
+
+- name: compile sasl password map for relaying
+  command: postmap "{{ mta_relayhost_auth.mapfile }}"
+  when: password_map | changed
+  notify:
+    - reload postfix
+  tags:
+    - postfix
+
 - name: setup core firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   with_items:
