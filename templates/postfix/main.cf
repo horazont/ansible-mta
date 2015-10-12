@@ -54,16 +54,16 @@ transport_maps = hash:/etc/postfix/transports
 {% if mta_listen | default(True) %}
 # origin: mta_listen (requires mta_tls, which is used here)
 smtpd_use_tls = yes
-smtpd_tls_cert_file = {{ mta_tls.cert_file }}
-smtpd_tls_key_file = {{ mta_tls.key_file }}
-smtpd_tls_security_level = {{ mta_tls.security_level | default("may") }}
+smtpd_tls_cert_file = {{ mta_tls_cert_file }}
+smtpd_tls_key_file = {{ mta_tls_key_file }}
+smtpd_tls_security_level = {{ mta_tls_security_level | default("may") }}
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}
 
 smtp_tls_security_level = may
 
-{% if mta_tls | default(False) and mta_tls.log | default(False) -%}
-# origin: mta_tls.log
+{% if mta_tls_log | default(False) -%}
+# origin: mta_tls_log
 smtp_tls_loglevel = 1
 smtpd_tls_loglevel = 1
 {% endif %}
