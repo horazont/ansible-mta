@@ -37,7 +37,7 @@
             mode="{{ item.mode | default('ug=rw,o=r') }}"
             owner={{ item.owner | default("root") }}
             group={{ item.group | default("root") }}
-  with_items: mta_alias_maps | default([])
+  with_items: mta_alias_maps
   tags:
     - postfix
     - postfix_virtual_map
@@ -91,7 +91,7 @@
 - name: deploy sasl password map for relaying
   template: src=postfix/password_map
             dest="{{ mta_relayhost_auth.mapfile }}"
-  when: (mta_relayhost | default(False)) and (mta_relayhost_auth | default(False))
+  when: mta_relayhost and mta_relayhost_auth
   register: password_map
   notify:
     - reload postfix
@@ -118,7 +118,7 @@
 
 - name: setup submission firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
-  when: (mta_msa | default(False)) and ansible_distribution in ['Fedora']
+  when: mta_msa and ansible_distribution in ['Fedora']
   with_items:
     - submission
   register: firewall_rule_copy2
@@ -144,7 +144,7 @@
 
 - name: enable submission in firewall
   command: firewall-cmd --permanent --zone=public --add-service={{ item }}
-  when: (mta_msa | default(False)) and ansible_distribution in ['Fedora']
+  when: mta_msa and ansible_distribution in ['Fedora']
   with_items:
     - submission
   tags:

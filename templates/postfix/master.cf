@@ -9,8 +9,8 @@
 # service type  private unpriv  chroot  wakeup  maxproc command + args
 #               (yes)   (yes)   (yes)   (never) (100)
 # ==========================================================================
-{% if mta_listen | default(True) %}
-{% if mta_postscreen | default(False) %}
+{% if mta_listen %}
+{% if mta_postscreen %}
 smtp      inet  n       -       n       -       1       postscreen
 smtpd     pass  -       -       n       -       -       smtpd
 dnsblog   unix  -       -       n       -       0       dnsblog
@@ -20,7 +20,7 @@ smtp      inet  n       -       n       -       -       smtpd
 {%- endif %}
 {%- endif %}
 
-{% if mta_msa | default(False) -%}
+{% if mta_msa -%}
 submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_client_restrictions={{ mta_msa.client_restrictions | join(",") }}
@@ -31,7 +31,7 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_sasl_type={{ mta_msa.sasl.type }}
   -o smtpd_sasl_path={{ mta_msa.sasl.path }}
 {%- endif %}
-{% if mta_dkim | default(False) and mta_msa.dkim | default(False) %}
+{% if mta_dkim and mta_msa.dkim | default(False) %}
   -o smtpd_milters=inet:127.0.0.1:8891
 {%- endif %}
 {%- endif %}

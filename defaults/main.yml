@@ -1,0 +1,28 @@
+---
+mta_alias_maps: []
+mta_relayhost: False
+mta_relayhost_auth: False
+mta_msa: False
+mta_dkim: False
+mta_listen: True
+mta_smtpd_client_restrictions: []
+mta_smtpd_sender_restrictions: []
+mta_smtpd_relay_restrictions:
+- reject_unauth_destination
+mta_smtpd_recipient_restrictions: []
+mta_smtpd_helo_restrictions: []
+mta_domains: []
+mta_postscreen: False
+mta_delay_warning: False
+mta_transport_map: {}
+mta_tls_security_level: "may"
+mta_tls_log: False
+mta_mynetworks: []
+mta_smtpd_helo_required: False
+mta_strict_rfc821_envelopes: False
+mta_domains: []
+mta_message_size_limit: False
+mta_listen_interfaces:
+- all
+mta_soft_bounce: False
+mta_relay_domains: []
