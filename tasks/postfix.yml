@@ -106,6 +106,31 @@
   tags:
     - postfix
 
+- name: upload certificate
+  copy: content="{{ mta_tls_cert }}"
+        dest=/etc/postfix/ssl.crt
+        owner=root
+        group=root
+        mode=ugo=r
+  notify:
+  - reload postfix
+  tags:
+  - postfix
+  - certificate
+
+- name: upload key
+  copy: content="{{ mta_tls_key }}"
+        dest=/etc/postfix/ssl.key
+        owner=root
+        group=root
+        mode=u=r,go-rwx
+  notify:
+  - reload postfix
+  tags:
+  - postfix
+  - certificate
+  - requires-secret
+
 - name: setup core firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   with_items:
