@@ -37,7 +37,7 @@
             mode="{{ item.mode | default('ug=rw,o=r') }}"
             owner={{ item.owner | default("root") }}
             group={{ item.group | default("root") }}
-  with_items: mta_alias_maps
+  with_items: mta_alias_maps | default([])
   tags:
     - postfix
     - postfix_virtual_map
@@ -46,7 +46,7 @@
 - name: compile alias tables
   command: postalias {{ item.item.file }}
   when: item | changed
-  with_items: alias_map_update.results
+  with_items: alias_map_update.results | default([])
   notify:
     - reload postfix
   tags:
@@ -65,7 +65,7 @@
 - name: compile virtual tables
   command: postmap /etc/postfix/virtual_{{ item.item.domain }}
   when: item | changed
-  with_items: virtual_map_update.results
+  with_items: virtual_map_update.results | default([])
   notify:
     - reload postfix
   tags:
@@ -83,7 +83,7 @@
 - name: compile transport map
   command: postmap /etc/postfix/transports
   when: postfix_transport_map | changed
-  with_items: postfix_transport_map.results
+  with_items: postfix_transport_map.results | default([])
   tags:
     - postfix
     - postfix_transport_map
@@ -118,7 +118,7 @@
 
 - name: setup submission firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
-  when: mta_msa and ansible_distribution in ['Fedora']
+  when: (mta_msa | default(False)) and ansible_distribution in ['Fedora']
   with_items:
     - submission
   register: firewall_rule_copy2
@@ -144,7 +144,7 @@
 
 - name: enable submission in firewall
   command: firewall-cmd --permanent --zone=public --add-service={{ item }}
-  when: mta_msa and ansible_distribution in ['Fedora']
+  when: (mta_msa | default(False)) and ansible_distribution in ['Fedora']
   with_items:
     - submission
   tags:
