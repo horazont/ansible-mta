@@ -58,6 +58,7 @@ smtpd_tls_cert_file = /etc/postfix/ssl.crt
 smtpd_tls_key_file = /etc/postfix/ssl.key
 smtpd_tls_security_level = {{ mta_tls_security_level }}
 smtpd_tls_exclude_ciphers = EXPORT, LOW
+tls_ssl_options = NO_COMPRESSION
 {% endif %}
 
 smtp_tls_security_level = may
