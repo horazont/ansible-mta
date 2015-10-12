@@ -179,23 +179,17 @@ If ``mta_msa`` is not false, the submission port is opened and the following
 settings apply (only for the submission smtpd, not for the regular, port 25,
 smtpd):
 
-* If ``mta_msa.sasl`` is not false, sasl is enabled on the submission port and
-  the following settings apply:
+* ``mta_msa_sasl_type`` (string): Value for the postfix ``smtpd_sasl_type``
+  setting.
 
-  * ``mta_msa.sasl.type`` (string): Value for the postfix ``smtpd_sasl_type``
-    setting.
-  * ``mta_msa.sasl.path`` (string): Value for the postfix ``smtpd_sasl_path``
-    setting.
+* ``mta_msa_sasl_path`` (string): Value for the postfix ``smtpd_sasl_path``
+  setting.
 
-* ``mta_msa.client_restrictions`` (list of strings): List of restrictions to
-  apply to clients connecting to the MSA. It is recommended to use::
+Both of the above sasl settings need to be set to enable SASL
+authentication. Note that the relay restrictions are configured so that SASL
+authentication is required on the submission port to allow sending mail.
 
-    - permit_sasl_authenticated
-    - reject
-
-  together with ``mta_msa.sasl``.
-
-* ``mta_msa.dkim`` (bool): Enable the OpenDKIM milter for mail submitted via the
+* ``mta_msa_dkim`` (bool): Enable the OpenDKIM milter for mail submitted via the
   MSA. Requires ``mta_dkim`` to be configured properly.
 
 TLS
@@ -214,16 +208,16 @@ TLS
 OpenDKIM
 --------
 
-``mta_dkim`` (mapping or false, default false): If not false, OpenDKIM is
-installed and configured. In that case, the following settings apply:
+If ``mta_dkim`` is not false, the settings below become available and OpenDKIM
+will be configured.
 
-* ``mta_dkim.sign`` (bool): Whether the OpenDKIM milter shall sign mail for the
-  domains listed in ``mta_dkim.domains``.
+* ``mta_dkim_sign`` (bool): Whether the OpenDKIM milter shall sign mail for the
+  domains listed in ``mta_dkim_domains``.
 
-* ``mta_dkim.verify`` (bool): Whether the OpenDKIM milter shall verify mail.
+* ``mta_dkim_verify`` (bool): Whether the OpenDKIM milter shall verify mail.
 
-* ``mta_dkim.domains`` (list of hashes): Configuration of keys and domains for
-  automtaic DKIM signing. Each entry must have the following keys:
+* ``mta_dkim_domains`` (list of hashes): Configuration of keys and domains for
+  automatic DKIM signing. Each entry must have the following keys:
 
   * ``name`` (string): The domain name to sign for
   * ``key`` (string): Name part of the key.

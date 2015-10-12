@@ -23,15 +23,17 @@ smtp      inet  n       -       n       -       -       smtpd
 {% if mta_msa -%}
 submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
-  -o smtpd_client_restrictions={{ mta_msa.client_restrictions | join(",") }}
+  -o smtpd_client_restrictions=
   -o smtpd_recipient_restrictions=
+  -o smtpd_helo_restrictions=
+  -o smtpd_sender_restrictions=
   -o smtpd_relay_restrictions=permit_sasl_authenticated,defer_unauth_destination
-{% if mta_msa.sasl | default(False) %}
+{% if mta_msa_sasl_type and mta_msa_sasl_path %}
   -o smtpd_sasl_auth_enable=yes
-  -o smtpd_sasl_type={{ mta_msa.sasl.type }}
-  -o smtpd_sasl_path={{ mta_msa.sasl.path }}
+  -o smtpd_sasl_type={{ mta_msa_sasl_type }}
+  -o smtpd_sasl_path={{ mta_msa_sasl_path }}
 {%- endif %}
-{% if mta_dkim and mta_msa.dkim | default(False) %}
+{% if mta_dkim and mta_msa_dkim %}
   -o smtpd_milters=inet:127.0.0.1:8891
 {%- endif %}
 {%- endif %}
