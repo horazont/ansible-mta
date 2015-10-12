@@ -111,6 +111,7 @@
         owner=root
         group=root
         mode=ugo=r
+  when: mta_tls_cert | default(False)
   notify:
   - reload postfix
   tags:
@@ -123,6 +124,7 @@
         owner=root
         group=root
         mode=u=r,go-rwx
+  when: mta_tls_key | default(False)
   notify:
   - reload postfix
   tags:
