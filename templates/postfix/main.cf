@@ -43,7 +43,7 @@ soft_bounce = {{ 'yes' if mta_soft_bounce | default(False) else 'no' }}
 
 {% if mta_relay_domains | default(False) -%}
 # origin: mta_relay_domains
-relay_domains = {{ mta_relay_domains | join(', ') }}
+relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 {%- endif %}
 
 {% if mta_transport_map | default(False) -%}
