@@ -22,7 +22,7 @@
     - apt
 
 - name: instanciate config files
-  template: backup=yes dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
+  template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
   with_items:
     - master.cf
     - main.cf

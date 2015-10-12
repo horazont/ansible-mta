@@ -77,10 +77,6 @@ Accepting mail
     * ``mta_postscreen.dnsbl.threshold`` (integer): The threshold for a client
       to fail the test.
 
-* ``mta_auto_backup_mx`` (bool): If enabled, postfix will automatically accept
-  and relay mail for domains for which it is listed in a MX record (via
-  ``permit_mx_backup``).
-
 * ``mta_virtual_maps`` (list of things). The things can either be strings, in
   which case they are taken verbatimly in the ``virtual_alias_maps`` parameter
   of postfix. Otherwise, they must be hashes with the following characteristics:
@@ -134,6 +130,46 @@ Accepting mail
     mta_transport_map:
       "example.com": "smtp:server-1.example.com"
       "example.org": "smtp:server-1.example.org"
+
+* ``mta_smtpd_client_restrictions`` (list of strings, default empty):
+  Add client restrictions for the server to apply.  See
+  `smtpd_client_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_client_restrictions
+
+* ``mta_smtpd_helo_required`` (bool, default false):  `smtpd_helo_required`__
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_helo_required
+
+* ``mta_strict_rfc821_envelopes`` (bool, default false): `strict_rfc821_envelopes`__
+
+  __ http://www.postfix.org/postconf.5.html#strict_rfc821_envelopes
+
+* ``mta_smtpd_helo_restrictions`` (list of strings, default empty): Add
+  HELO restrictions for the server to apply.  See `smtpd_helo_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_helo_restrictions
+
+* ``mta_smtpd_sender_restrictions`` (list of strings, default empty): Add
+  sender restrictions for the server to apply.  See `smtpd_sender_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_sender_restrictions
+
+* ``mta_smtpd_relay_restrictions`` (list of strings, default
+  ``["reject_unauth_destination"]``): Add relay restrictions for the server
+  to apply.  See `smtpd_relay_restrictions`__.
+
+  **Note:**  When overriding the default value, make sure to include *at least*
+  ``reject_unauth_destination`` in your list of restrictions to prevent your MTA
+  from becoming an open relay!
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_relay_restrictions
+
+* ``mta_smtpd_recipient_restrictions`` (list of strings, default empty): Add
+  recipient restrictions for the server to apply.  See
+  `smtpd_recipient_restrictions`__.
+
+  __ http://www.postfix.org/postconf.5.html#smtpd_recipient_restrictions
 
 
 Mail submission agent

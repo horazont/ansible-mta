@@ -43,7 +43,7 @@ soft_bounce = {{ 'yes' if mta_soft_bounce | default(False) else 'no' }}
 
 {% if mta_relay_domains | default(False) -%}
 # origin: mta_relay_domains
-relay_domains = {{ mta_relay_domains | join(', ') }}
+relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 {%- endif %}
 
 {% if mta_transport_map | default(False) -%}
@@ -72,17 +72,42 @@ smtpd_tls_loglevel = 1
 mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
+{% if mta_is_destination -%}
 smtpd_client_restrictions =
-    reject_unknown_reverse_client_hostname
+{% for restriction in mta_smtpd_client_restrictions | default([]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
 
-smtpd_recipient_restrictions =
+# origin: mta_smtpd_helo_required
+smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required | default(False) else "no" }}
+# origin: mta_strict_rfc821_envelopes
+strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes | default(False) else "no" }}
 
+# origin: mta_smtpd_helo_restrictions
+smtpd_helo_restrictions =
+{% for restriction in mta_smtpd_helo_restrictions | default([]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
+# origin: mta_smtpd_sender_restrictions
+smtpd_sender_restrictions =
+{% for restriction in mta_smtpd_sender_restrictions | default([]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
+# origin: mta_smtpd_relay_restrictions
 smtpd_relay_restrictions =
-    permit_mynetworks,
-{% if mta_auto_backup_mx | default(False) -%}
-    permit_mx_backup,
-{%- endif %}
-    reject_unauth_destination
+{% for restriction in mta_smtpd_relay_restrictions | default(["reject_unauth_destination"]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
+# origin: mta_smtpd_recipient_restrictions
+smtpd_recipient_restrictions =
+{% for restriction in mta_smtpd_recipient_restrictions | default([]) %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
+{% endif %}
 
 {% if mta_domains | default(False) -%}
 # origin: mta_domains (requires mta_virtual_maps)
