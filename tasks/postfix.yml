@@ -83,7 +83,6 @@
 - name: compile transport map
   command: postmap /etc/postfix/transports
   when: postfix_transport_map | changed
-  with_items: postfix_transport_map.results | default([])
   tags:
     - postfix
     - postfix_transport_map
