@@ -127,6 +127,8 @@ scache    unix  -       -       n       -       1       scache
 #  flags=R user=scalemail argv=/usr/lib/scalemail/bin/scalemail-store
 #  ${nexthop} ${user} ${extension}
 #
-#mailman   unix  -       n       n       -       -       pipe
-#  flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
-#  ${nexthop} ${user}
+{% if mta_use_mailman %}
+mailman   unix  -       n       n       -       -       pipe
+  flags=FR user=list argv={{ mta_mailman_script_location }}
+  ${nexthop} ${user}
+{% endif %}
