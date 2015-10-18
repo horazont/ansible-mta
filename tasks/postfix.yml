@@ -72,6 +72,18 @@
     - postfix
     - postfix_virtual_map
 
+- name: create alias include dir
+  file: path=/etc/postfix/aliases.d/ state=directory
+  tags:
+    - postfix
+
+- name: force alias includer generation at this point
+  command: /bin/true
+  notify:
+    - update include alias file
+  tags:
+    - postfix
+
 - name: update transport map
   template: src=postfix/transport_map dest=/etc/postfix/transports
   when: mta_transport_map is mapping
