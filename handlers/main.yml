@@ -2,5 +2,8 @@
 - name: reload postfix
   service: name=postfix state=reloaded
 
+- name: restart postfix
+  service: name=postfix state=restarted
+
 - name: restart opendkim
   service: name=opendkim state=restarted

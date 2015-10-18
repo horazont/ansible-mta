@@ -29,7 +29,7 @@
   tags:
     - postfix
   notify:
-    - reload postfix
+    - restart postfix
 
 - name: update alias tables
   template: src=postfix/aliases
