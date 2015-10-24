@@ -34,7 +34,7 @@
 - name: update alias tables
   template: src=postfix/aliases
             dest={{ item.file }}
-            mode="{{ item.mode | default('ug=rw,o=r') }}"
+            mode="{{ item.mode | default('0664') }}"
             owner={{ item.owner | default("root") }}
             group={{ item.group | default("root") }}
   with_items: mta_alias_maps
@@ -127,7 +127,7 @@
         dest=/etc/postfix/ssl.crt
         owner=root
         group=root
-        mode=ugo=r
+        mode=0444
   when: mta_tls_cert | default(False)
   notify:
   - reload postfix
@@ -140,7 +140,7 @@
         dest=/etc/postfix/ssl.key
         owner=root
         group=root
-        mode=u=r,go-rwx
+        mode=0400
   when: mta_tls_key | default(False)
   notify:
   - reload postfix
