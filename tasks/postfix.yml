@@ -77,6 +77,11 @@
   tags:
     - postfix
 
+- name: create placeholder file
+  copy: dest=/etc/postfix/aliases.d/placeholder.aliases content=""
+  tags:
+    - postfix
+
 - name: force alias includer generation at this point
   command: /bin/true
   notify:
