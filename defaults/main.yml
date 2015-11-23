@@ -38,3 +38,10 @@ mta_dkim_sign: False
 mta_dkim_verify: True
 mta_dkim_selector: "deployment"
 mta_dkim_domains: []
+
+# Mailman settings
+mta_use_mailman: False
+mta_mailman_script_location: /etc/mailman/postfix-to-mailman.py
+
+# other
+mta_message_size_limit: 10240000
