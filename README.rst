@@ -240,6 +240,9 @@ Safety nets and misc
 * ``mta_override_hostname`` (string, optional): If set, this is used as value
   for myhostname instead of the value of ``inventory_hostname``.
 
+* ``mta_message_size_limit`` (number, default 10240000): Maximum size of emails
+  that postfix will accept in bytes.
+
 If you’d like to add further files from another role, install them to
 ``/etc/postfix/aliases.d/`` using file names ending in ``.aliases``, and notify
 the ``update include alias file`` handler.  These files will automatically be

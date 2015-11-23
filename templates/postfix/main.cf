@@ -168,3 +168,5 @@ smtp_sasl_mechansim_filter =
 smtp_sasl_security_options =
 {% endif %}
 {% endif %}
+
+message_size_limit = {{ mta_message_size_limit }}
