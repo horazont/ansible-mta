@@ -43,8 +43,8 @@ Accepting mail
   accept mail. This is independent from ``mta_is_destination`` -- domains may be
   purely for forwarding purposes.
 
-* ``mta_message_size_limit`` (integer): Maximum size for a message in bytes to
-  be accepted for delivery (on either service, smtpd or submission)
+* ``mta_message_size_limit`` (integer, default 10240000): Maximum size of emails
+  that postfix will accept in bytes (on either service, smtpd or submission).
 
 * ``mta_postscreen`` (thing or false): If not false, the ``postscreen`` service
   will be enabled.
@@ -239,9 +239,6 @@ Safety nets and misc
 
 * ``mta_override_hostname`` (string, optional): If set, this is used as value
   for myhostname instead of the value of ``inventory_hostname``.
-
-* ``mta_message_size_limit`` (number, default 10240000): Maximum size of emails
-  that postfix will accept in bytes.
 
 If you’d like to add further files from another role, install them to
 ``/etc/postfix/aliases.d/`` using file names ending in ``.aliases``, and notify
