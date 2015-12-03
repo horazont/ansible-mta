@@ -56,7 +56,7 @@
 - name: update virtual tables
   template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
   when: item is mapping
-  with_items: mta_virtual_maps
+  with_items: mta_virtual_maps | default(omit)
   tags:
     - postfix
     - postfix_virtual_map
