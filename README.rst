@@ -172,6 +172,28 @@ Accepting mail
   __ http://www.postfix.org/postconf.5.html#smtpd_recipient_restrictions
 
 
+Spam classification on incoming mail
+------------------------------------
+
+If ``mta_spampd`` is not false, ``spampd`` is installed and configured as a
+before-queue SMTPD proxy, which acts on all incoming mail on port 25.
+
+Additional configuration is possible with the following options:
+
+* ``mta_spampd_port`` (integer, default 10026): The localhost port on which
+  ``spampd`` is configured to listen. Generally, there is no need to change
+  this, unless you have something else which needs 10026.
+
+* ``mta_spampd_max_children`` (integer, default 5): The maximum number of
+  worker children used by ``spampd``.
+
+* ``mta_spampd_only_local`` (boolean, default true): Whether to disable all
+  non-local checks (e.g. DNSBL).
+
+* ``mta_proxy_sink_port`` (integer, default 12500): The sink where ``spampd``
+  puts its mail afterwards; this is configured to be a postfix smtpd which will
+  then handle the actual (local or remote) delivery.
+
 Mail submission agent
 ---------------------
 

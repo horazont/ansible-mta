@@ -12,6 +12,15 @@
     - postfix
     - yum
 
+- name: install additional packages via yum
+  yum: name={{ item }} state=latest
+  when: "ansible_distribution in ['Fedora'] and (ansible_distribution_version | int) >= 23"
+  with_items:
+  - postfix-ldap
+  tags:
+  - postfix
+  - yum
+
 - name: install packages via apt
   apt: name={{ item }} state=latest
   when: "ansible_distribution in ['Ubuntu', 'Debian']"
@@ -20,6 +29,24 @@
   tags:
     - postfix
     - apt
+
+- name: install spampd (redhat)
+  dnf: name={{ item }} state=latest
+  when: mta_spampd and ansible_os_family == "RedHat"
+  with_items:
+  - spampd
+  tags:
+  - postfix
+  - yum
+
+- name: install spampd (debian)
+  apt: name={{ item }} state=latest
+  when: mta_spampd and ansible_os_family == "Debian"
+  with_items:
+  - spampd
+  tags:
+  - postfix
+  - yum
 
 - name: instanciate config files
   template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
@@ -129,6 +156,29 @@
   - postfix
   - certificate
   - requires-secret
+
+- name: configure spampd (redhat)
+  template: src=spampd-fedora.j2
+            dest=/etc/sysconfig/spampd
+  when: mta_spampd and ansible_os_family == "RedHat"
+  tags:
+  - postfix
+  notify:
+  - restart spampd
+
+- name: configure spampd (debian)
+  template: src=spampd-debian.j2
+            dest=/etc/default/spampd
+  when: mta_spampd and ansible_os_family == "Debian"
+  tags:
+  - postfix
+  notify:
+  - restart spampd
+
+- name: enable and start spampd
+  service: name=spampd state=started enabled=yes
+  tags:
+  - postfix
 
 - name: setup core firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/

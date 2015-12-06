@@ -38,3 +38,11 @@ mta_dkim_sign: False
 mta_dkim_verify: True
 mta_dkim_selector: "deployment"
 mta_dkim_domains: []
+
+# spampd-integration
+mta_spampd: False
+mta_spampd_port: 10026
+mta_spampd_max_children: 5
+mta_spampd_only_local: True
+
+mta_proxy_sink_port: 12500
