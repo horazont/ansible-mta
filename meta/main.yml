@@ -1,0 +1,4 @@
+---
+dependencies:
+- role: ferm-hook
+  when: "ferm | default(False)"
