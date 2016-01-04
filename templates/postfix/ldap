@@ -1,0 +1,8 @@
+server_host = {{ item.servers | default(["localhost"]) | join(" ") }}
+search_base = {{ item.base }}
+query_filter = {{ item.filter }}
+result_attribute = {{ item.result_attributes | default(["uid"]) | join(", ") }}
+{% if item.domains | default([]) %}
+domain = {{ item.domains | join(" ") }}
+{% endif %}
+bind = no

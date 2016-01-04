@@ -26,6 +26,7 @@
   when: "ansible_distribution in ['Ubuntu', 'Debian']"
   with_items:
     - postfix
+    - postfix-ldap
   tags:
     - postfix
     - apt
@@ -95,6 +96,14 @@
   with_items: virtual_map_update.results | default([])
   notify:
     - reload postfix
+  tags:
+    - postfix
+    - postfix_virtual_map
+
+- name: update ldap configurations
+  template: src=postfix/ldap dest=/etc/postfix/virtual_ldap_{{ item.name }}
+  when: item is mapping and (item.type | default("hash")) == "ldap"
+  with_items: mta_virtual_maps
   tags:
     - postfix
     - postfix_virtual_map
