@@ -116,18 +116,23 @@ smtpd_recipient_restrictions =
 
 {% endif %}
 
-{% if mta_domains -%}
-# origin: mta_domains (requires mta_virtual_maps)
-virtual_alias_domains = {{ mta_domains | join(", ") }}
-# origin: mta_virtual_maps
-virtual_alias_maps =
+{% macro virtual_maps(arg=None, caller=None) %}
 {% for item in mta_virtual_maps %}
 {% if item is string %}
     {{ item }}
 {% elif item is mapping %}
-    hash:/etc/postfix/virtual_{{ item.domain }}
-{% endif %}
-{% endfor %}
+{% if (item.type | default("hash")) == "hash" %}
+    hash:/etc/postfix/virtual_hash_{{ item.domain }}
+{% endif -%}
+{% endif -%}
+{% endfor -%}
+{% endmacro %}
+
+{% if mta_domains -%}
+# origin: mta_domains (requires mta_virtual_maps)
+virtual_alias_domains = {{ mta_domains | join(", ") }}
+# origin: mta_virtual_maps
+virtual_alias_maps = {% call virtual_maps() %}{% endcall %}
 {% endif %}
 
 {% if mta_message_size_limit -%}

@@ -81,8 +81,8 @@
     - postfix_virtual_map
 
 - name: update virtual tables
-  template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
-  when: item is mapping
+  template: src=postfix/virtual dest=/etc/postfix/virtual_hash_{{ item.domain }}
+  when: item is mapping and (item.type | default("hash")) == "hash"
   with_items: mta_virtual_maps
   tags:
     - postfix
@@ -90,7 +90,7 @@
   register: virtual_map_update
 
 - name: compile virtual tables
-  command: postmap /etc/postfix/virtual_{{ item.item.domain }}
+  command: postmap /etc/postfix/virtual_hash_{{ item.item.domain }}
   when: item | changed
   with_items: virtual_map_update.results | default([])
   notify:
