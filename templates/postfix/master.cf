@@ -84,6 +84,12 @@ virtual   unix  -       n       n       -       -       virtual
 lmtp      unix  -       -       n       -       -       lmtp
 anvil     unix  -       -       n       -       1       anvil
 scache    unix  -       -       n       -       1       scache
+{% if mta_delivery_type == "agent_transport" and mta_delivery_agent %}
+dovecot   unix  -       n       n       -       -       pipe
+{% if mta_delivery_agent == "dovecot" %}
+    flags=DRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
+{% endif %}
+{% endif %}
 #
 # ====================================================================
 # Interfaces to non-Postfix software. Be sure to examine the manual

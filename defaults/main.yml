@@ -25,6 +25,11 @@ mta_listen_interfaces:
 mta_soft_bounce: False
 mta_relay_domains: []
 
+# Local mail delivery
+mta_delivery_type: "local"
+mta_delivery_agent: '{{ "" if not mta_is_destination | default(False) else "dovecot" }}'
+mta_agent_transport_user: "vmail:mail"
+
 # Mail Submission Agent settings
 mta_msa: False
 mta_msa_smtpd_client_restrictions: []
