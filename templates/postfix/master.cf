@@ -132,3 +132,7 @@ mailman   unix  -       n       n       -       -       pipe
   flags=FR user=list argv={{ mta_mailman_script_location }}
   ${nexthop} ${user}
 {% endif %}
+{% for pipe in mta_pipe_transports %}
+{{ pipe.name }}      unix  -       n       n       -       1       pipe
+  flags={{ pipe.flags }} user={{ pipe.user }} argv={{ pipe.argv }}
+{% endfor %}
