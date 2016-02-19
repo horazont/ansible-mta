@@ -70,9 +70,9 @@ transport_maps = hash:/etc/postfix/transports
 {% if mta_listen %}
 # origin: mta_listen (requires mta_tls, which is used here)
 smtpd_use_tls = yes
-smtpd_tls_cert_file = /etc/postfix/ssl.crt
-smtpd_tls_key_file = /etc/postfix/ssl.key
-smtpd_tls_security_level = {{ mta_tls_security_level }}
+smtpd_tls_cert_file = /etc/postfix/mta.crt
+smtpd_tls_key_file = /etc/postfix/mta.key
+smtpd_tls_security_level = may
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}
 

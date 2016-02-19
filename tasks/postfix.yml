@@ -143,10 +143,11 @@
 
 - name: upload certificate
   copy: content="{{ mta_tls_cert }}"
-        dest=/etc/postfix/ssl.crt
+        dest=/etc/postfix/mta.crt
         owner=root
         group=root
         mode=ugo=r
+  when: mta_listen and mta_tls
   notify:
   - reload postfix
   tags:
@@ -155,10 +156,11 @@
 
 - name: upload key
   copy: content="{{ mta_tls_key }}"
-        dest=/etc/postfix/ssl.key
+        dest=/etc/postfix/mta.key
         owner=root
         group=root
         mode=u=r,go-rwx
+  when: mta_listen and mta_tls
   notify:
   - reload postfix
   tags:
