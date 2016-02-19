@@ -199,3 +199,11 @@
   service: name=postfix state=started enabled=yes
   tags:
     - postfix
+
+- name: upload collectd scripts
+  copy:
+    src: queuesize.sh
+    dest: /usr/local/bin/
+    mode: ugo=rx
+  tags:
+  - postfix
