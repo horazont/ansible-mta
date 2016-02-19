@@ -13,6 +13,7 @@ mta_domains: []
 mta_postscreen: False
 mta_delay_warning: False
 mta_transport_map: {}
+mta_tls: True
 mta_tls_security_level: "may"
 mta_tls_log: False
 mta_mynetworks: []
