@@ -67,7 +67,7 @@ relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 transport_maps = hash:/etc/postfix/transports
 {%- endif %}
 
-{% if mta_listen %}
+{% if mta_listen and mta_tls %}
 # origin: mta_listen (requires mta_tls, which is used here)
 smtpd_use_tls = yes
 smtpd_tls_cert_file = /etc/postfix/mta.crt
@@ -76,7 +76,10 @@ smtpd_tls_security_level = may
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}
 
-smtp_tls_security_level = may
+smtp_tls_security_level = {{ mta_tls_security_level }}
+{% if mta_tls_dnssec %}
+smtp_dns_support_level = dnssec
+{% endif %}
 
 {% if mta_tls_log -%}
 # origin: mta_tls_log
