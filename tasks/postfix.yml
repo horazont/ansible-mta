@@ -189,6 +189,7 @@
 
 - name: enable and start spampd
   service: name=spampd state=started enabled=yes
+  when: mta_spampd
   tags:
   - postfix
 
