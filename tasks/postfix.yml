@@ -4,7 +4,7 @@
 
 
 - name: install packages via yum
-  yum: name={{ item }} state=latest
+  dnf: name={{ item }} state=latest
   when: "ansible_distribution in ['Fedora']"
   with_items:
     - postfix
@@ -12,14 +12,42 @@
     - postfix
     - yum
 
+- name: install additional packages via yum
+  dnf: name={{ item }} state=latest
+  when: "ansible_distribution in ['Fedora'] and (ansible_distribution_version | int) >= 23"
+  with_items:
+  - postfix-ldap
+  tags:
+  - postfix
+  - yum
+
 - name: install packages via apt
   apt: name={{ item }} state=latest
   when: "ansible_distribution in ['Ubuntu', 'Debian']"
   with_items:
     - postfix
+    - postfix-ldap
   tags:
     - postfix
     - apt
+
+- name: install spampd (redhat)
+  dnf: name={{ item }} state=latest
+  when: mta_spampd and ansible_os_family == "RedHat"
+  with_items:
+  - spampd
+  tags:
+  - postfix
+  - yum
+
+- name: install spampd (debian)
+  apt: name={{ item }} state=latest
+  when: mta_spampd and ansible_os_family == "Debian"
+  with_items:
+  - spampd
+  tags:
+  - postfix
+  - yum
 
 - name: instanciate config files
   template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
@@ -38,6 +66,7 @@
             owner={{ item.owner | default("root") }}
             group={{ item.group | default("root") }}
   with_items: mta_alias_maps
+  when: 'item.map | default(False) != False'
   tags:
     - postfix
     - postfix_virtual_map
@@ -54,8 +83,8 @@
     - postfix_virtual_map
 
 - name: update virtual tables
-  template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
-  when: item is mapping
+  template: src=postfix/virtual dest=/etc/postfix/virtual_hash_{{ item.domain }}
+  when: 'item is mapping and (item.type | default("hash")) == "hash" and (item.map | default(False)) != False'
   with_items: mta_virtual_maps
   tags:
     - postfix
@@ -63,11 +92,19 @@
   register: virtual_map_update
 
 - name: compile virtual tables
-  command: postmap /etc/postfix/virtual_{{ item.item.domain }}
+  command: postmap /etc/postfix/virtual_hash_{{ item.item.domain }}
   when: item | changed
   with_items: virtual_map_update.results | default([])
   notify:
     - reload postfix
+  tags:
+    - postfix
+    - postfix_virtual_map
+
+- name: update ldap configurations
+  template: src=postfix/ldap dest=/etc/postfix/virtual_ldap_{{ item.name }}
+  when: item is mapping and (item.type | default("hash")) == "ldap"
+  with_items: mta_virtual_maps
   tags:
     - postfix
     - postfix_virtual_map
@@ -107,10 +144,11 @@
 
 - name: upload certificate
   copy: content="{{ mta_tls_cert }}"
-        dest=/etc/postfix/ssl.crt
+        dest=/etc/postfix/mta.crt
         owner=root
         group=root
         mode=ugo=r
+  when: mta_listen and mta_tls
   notify:
   - reload postfix
   tags:
@@ -119,10 +157,11 @@
 
 - name: upload key
   copy: content="{{ mta_tls_key }}"
-        dest=/etc/postfix/ssl.key
+        dest=/etc/postfix/mta.key
         owner=root
         group=root
         mode=u=r,go-rwx
+  when: mta_listen and mta_tls
   notify:
   - reload postfix
   tags:
@@ -130,52 +169,45 @@
   - certificate
   - requires-secrets
 
-- name: setup core firewall service files
-  copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
-  with_items:
-    - smtpd
-  when: ansible_distribution in ['Fedora']
-  register: firewall_rule_copy1
+- name: configure spampd (redhat)
+  template: src=spampd-fedora.j2
+            dest=/etc/sysconfig/spampd
+  when: mta_spampd and ansible_os_family == "RedHat"
   tags:
-    - postfix
-    - firewall
+  - postfix
+  notify:
+  - restart spampd
 
-- name: setup submission firewall service files
-  copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
-  when: mta_msa and ansible_distribution in ['Fedora']
-  with_items:
-    - submission
-  register: firewall_rule_copy2
+- name: configure spampd (debian)
+  template: src=spampd-debian.j2
+            dest=/etc/default/spampd
+  when: mta_spampd and ansible_os_family == "Debian"
   tags:
-    - postfix
-    - firewall
+  - postfix
+  notify:
+  - restart spampd
 
-- name: reload firewall
-  command: firewall-cmd --reload
-  when: (firewall_rule_copy1|changed) or (firewall_rule_copy2|changed)
+- name: enable and start spampd
+  service: name=spampd state=started enabled=yes
+  when: mta_spampd
   tags:
-    - postfix
-    - firewall
+  - postfix
 
-- name: enable core services in firewall
-  command: firewall-cmd --permanent --zone=public --add-service={{ item }}
-  when: ansible_distribution in ['Fedora']
-  with_items:
-    - smtpd
+- include: postfix-ferm.yml
+  when: ferm
   tags:
-    - postfix
-    - firewall
-
-- name: enable submission in firewall
-  command: firewall-cmd --permanent --zone=public --add-service={{ item }}
-  when: mta_msa and ansible_distribution in ['Fedora']
-  with_items:
-    - submission
-  tags:
-    - postfix
-    - firewall
+  - ferm
+  - postfix
 
 - name: start and enable postfix
   service: name=postfix state=started enabled=yes
   tags:
     - postfix
+
+- name: upload collectd scripts
+  copy:
+    src: queuesize.sh
+    dest: /usr/local/bin/
+    mode: ugo=rx
+  tags:
+  - postfix

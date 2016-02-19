@@ -1,0 +1,17 @@
+---
+- name: "msa: deploy ferm config"
+  copy:
+    src=ferm-msa.conf
+    dest=/etc/ferm/ferm.d/40-postfix-msa.conf
+    owner=root
+    group=root
+  notify: run ferm
+  when: mta_msa
+
+- name: "mta: deploy ferm config"
+  copy:
+    src=ferm-mta.conf
+    dest=/etc/ferm/ferm.d/40-postfix-mta.conf
+    owner=root
+    group=root
+  notify: run ferm

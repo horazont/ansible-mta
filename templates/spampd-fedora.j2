@@ -1,0 +1,1 @@
+SPAMPD_OPTIONS="--host 127.0.0.1:{{ mta_spampd_port }} --relayhost 127.0.0.1:{{ mta_proxy_sink_port }} --tagall{% if mta_spampd_only_local %} -L{% endif %} --children={{ mta_spampd_max_children }}"

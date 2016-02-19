@@ -13,6 +13,7 @@ mta_domains: []
 mta_postscreen: False
 mta_delay_warning: False
 mta_transport_map: {}
+mta_tls: True
 mta_tls_security_level: "may"
 mta_tls_log: False
 mta_mynetworks: []
@@ -24,6 +25,11 @@ mta_listen_interfaces:
 - all
 mta_soft_bounce: False
 mta_relay_domains: []
+
+# Local mail delivery
+mta_delivery_type: "local"
+mta_delivery_agent: '{{ "" if not mta_is_destination | default(False) else "dovecot" }}'
+mta_agent_transport_user: "vmail:mail"
 
 # Mail Submission Agent settings
 mta_msa: False
@@ -38,3 +44,11 @@ mta_dkim_sign: False
 mta_dkim_verify: True
 mta_dkim_selector: "deployment"
 mta_dkim_domains: []
+
+# spampd-integration
+mta_spampd: False
+mta_spampd_port: 10026
+mta_spampd_max_children: 5
+mta_spampd_only_local: True
+
+mta_proxy_sink_port: 12500

@@ -1,0 +1,12 @@
+STARTSPAMPD=1
+PIDFILE=/var/run/spampd.pid
+LISTENHOST=127.0.0.1
+LISTENPORT={{ mta_spampd_port }}
+DESTHOST=127.0.0.1
+DESTPORT={{ mta_proxy_sink_port }}
+CHILDREN={{ mta_spampd_max_children }}
+USERID=spampd
+GROUPID=spampd
+TAGALL=1
+AUTOWHITELIST=0
+LOCALONLY={% if mta_spampd_only_local %}1{% else %}0{% endif %}

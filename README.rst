@@ -7,10 +7,6 @@ Variables
 Accepting mail
 --------------
 
-* ``mta_is_destination`` (bool): if true, the ``mydestination`` postfix
-  parameter will be set to ``$myhostname``. This is required to accept mail
-  for local delivery.
-
 * ``mta_alias_maps`` (list of things): map local aliases to user names or pipes
   or remote mail addresses.
 
@@ -170,6 +166,72 @@ Accepting mail
   `smtpd_recipient_restrictions`__.
 
   __ http://www.postfix.org/postconf.5.html#smtpd_recipient_restrictions
+
+
+Spam classification on incoming mail
+------------------------------------
+
+If ``mta_spampd`` is not false, ``spampd`` is installed and configured as a
+before-queue SMTPD proxy, which acts on all incoming mail on port 25.
+
+Additional configuration is possible with the following options:
+
+* ``mta_spampd_port`` (integer, default 10026): The localhost port on which
+  ``spampd`` is configured to listen. Generally, there is no need to change
+  this, unless you have something else which needs 10026.
+
+* ``mta_spampd_max_children`` (integer, default 5): The maximum number of
+  worker children used by ``spampd``.
+
+* ``mta_spampd_only_local`` (boolean, default true): Whether to disable all
+  non-local checks (e.g. DNSBL).
+
+* ``mta_proxy_sink_port`` (integer, default 12500): The sink where ``spampd``
+  puts its mail afterwards; this is configured to be a postfix smtpd which will
+  then handle the actual (local or remote) delivery.
+
+
+Local mail delivery
+-------------------
+
+Local mail delivery is controlled by the following options.
+
+* ``mta_delivery_type`` (string, default ``"local"``). A string which may have
+  any of the following values:
+
+  * ``"local"``: delivery is performed using the ``local(8)``
+    transport.
+  * ``"agent_transport"``: delivery is performed using a transport associated
+    with the ``mta_delivery_agent`` (see below).
+
+  The key difference is that the ``local(8)`` will use the local, UNIX user
+  associated with the recipient (determined by looking up the user name in the
+  alias maps), while the ``"agent_transport"`` is fixed to use
+  ``mta_agent_transport_user`` permissions.
+
+* ``mta_delivery_agent`` (string or false, default false). A string which may
+  have any of the following values:
+
+  * false: Prohibits any delivery and returns a ``5.1.1 Mailbox
+    unavailable`` error. This also implicitly forces ``mta_delivery_type`` to
+    ``"local"``.
+
+  * ``"dovecot"``: Uses ``dovecot-lda``, passing the recipient address and the
+    envelope sender. If used with ``"agent_transport"``, the user name
+    resulting from the lookup is also passed.
+
+  .. note::
+
+     For backward compatiblity, ``mta_delivery_agent`` defaults to
+     ``"dovecot"`` instead of false if ``mta_is_destination`` is set to true.
+
+* ``mta_agent_transport_user`` (string, default "``vmail:mail``"). This is used
+  when agent transport is enabled (see above). It is the POSIX user under which
+  the delivery command of the agent is run.
+
+* ``mta_is_destination`` (bool, *deprecated*). If ``mta_delivery_agent`` is not
+  set but ``mta_is_destination`` is set to true, ``mta_delivery_agent``
+  defaults to ``"dovecot"``.
 
 
 Mail submission agent

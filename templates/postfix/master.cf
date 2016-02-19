@@ -9,14 +9,22 @@
 # service type  private unpriv  chroot  wakeup  maxproc command + args
 #               (yes)   (yes)   (yes)   (never) (100)
 # ==========================================================================
+{% macro smtpd_args(caller=None) -%}
+{% if mta_spampd -%}
+  -o smtpd_proxy_filter=127.0.0.1:{{ mta_spampd_port }}
+  -o smtpd_proxy_options=speed_adjust
+{%- endif %}
+{%- endmacro -%}
+
 {% if mta_listen %}
 {% if mta_postscreen %}
 smtp      inet  n       -       n       -       1       postscreen
-smtpd     pass  -       -       n       -       -       smtpd
+smtpd     pass  -       -       n       -       -       smtpd {% call smtpd_args() %}{% endcall %}
+
 dnsblog   unix  -       -       n       -       0       dnsblog
 tlsproxy  unix  -       -       n       -       0       tlsproxy
 {%- else %}
-smtp      inet  n       -       n       -       -       smtpd
+smtp      inet  n       -       n       -       -       smtpd {% call smtpd_args() %}{% endcall %}
 {%- endif %}
 {%- endif %}
 
@@ -36,6 +44,18 @@ submission inet n       -       n       -       -       smtpd
 {% if mta_dkim and mta_msa_dkim %}
   -o smtpd_milters=inet:127.0.0.1:8891
 {%- endif %}
+{%- endif %}
+
+{% if mta_spampd %}
+127.0.0.1:{{ mta_proxy_sink_port }} inet n - n - -      smtpd
+  -o smtpd_authorized_xforward_hosts=127.0.0.0/8
+  -o smtpd_client_restrictions=
+  -o smtpd_helo_restrictions=
+  -o smtpd_sender_restrictions=
+  -o smtpd_relay_restrictions=
+  -o smtpd_recipient_restrictions=permit_mynetworks,reject
+  -o mynetworks=127.0.0.0/8
+  -o receive_override_options=no_unknown_recipient_checks
 {%- endif %}
 
 #628       inet  n       -       n       -       -       qmqpd
@@ -64,6 +84,12 @@ virtual   unix  -       n       n       -       -       virtual
 lmtp      unix  -       -       n       -       -       lmtp
 anvil     unix  -       -       n       -       1       anvil
 scache    unix  -       -       n       -       1       scache
+{% if mta_delivery_type == "agent_transport" and mta_delivery_agent %}
+dovecot   unix  -       n       n       -       -       pipe
+{% if mta_delivery_agent == "dovecot" %}
+    flags=DRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
+{% endif %}
+{% endif %}
 #
 # ====================================================================
 # Interfaces to non-Postfix software. Be sure to examine the manual
