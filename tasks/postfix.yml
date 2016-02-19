@@ -4,7 +4,7 @@
 
 
 - name: install packages via yum
-  yum: name={{ item }} state=latest
+  dnf: name={{ item }} state=latest
   when: "ansible_distribution in ['Fedora']"
   with_items:
     - postfix
@@ -13,7 +13,7 @@
     - yum
 
 - name: install additional packages via yum
-  yum: name={{ item }} state=latest
+  dnf: name={{ item }} state=latest
   when: "ansible_distribution in ['Fedora'] and (ansible_distribution_version | int) >= 23"
   with_items:
   - postfix-ldap
