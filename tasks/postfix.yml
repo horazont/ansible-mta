@@ -66,6 +66,7 @@
             owner={{ item.owner | default("root") }}
             group={{ item.group | default("root") }}
   with_items: mta_alias_maps
+  when: 'item.map | default(False) != False'
   tags:
     - postfix
     - postfix_virtual_map
@@ -83,7 +84,7 @@
 
 - name: update virtual tables
   template: src=postfix/virtual dest=/etc/postfix/virtual_hash_{{ item.domain }}
-  when: item is mapping and (item.type | default("hash")) == "hash"
+  when: 'item is mapping and (item.type | default("hash")) == "hash" and (item.map | default(False)) != False'
   with_items: mta_virtual_maps
   tags:
     - postfix

@@ -131,6 +131,8 @@ smtpd_recipient_restrictions =
     hash:/etc/postfix/virtual_hash_{{ item.domain }}
 {% elif item.type == "ldap" %}
     ldap:/etc/postfix/virtual_ldap{{ arg or "" }}_{{ item.name }}
+{% elif item.type == "file" %}
+    {{ item.file_type | default("hash") }}:{{ item.file }}
 {% endif -%}
 {% endif -%}
 {% endfor -%}
