@@ -15,4 +15,3 @@
     owner=root
     group=root
   notify: run ferm
-  when: mta_msa
