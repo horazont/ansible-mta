@@ -128,7 +128,7 @@
   tags:
   - postfix
   - certificate
-  - requires-secret
+  - requires-secrets
 
 - name: setup core firewall service files
   copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
