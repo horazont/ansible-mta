@@ -44,6 +44,12 @@ submission inet n       -       n       -       -       smtpd
 {% if mta_dkim and mta_msa_dkim %}
   -o smtpd_milters=inet:127.0.0.1:8891
 {%- endif %}
+{% if mta_msa_tls | default(mta_tls)%}
+  -o smtpd_tls_cert_file=/etc/postfix/msa.crt
+  -o smtpd_tls_key_file=/etc/postfix/msa.key
+  -o smtpd_tls_security_level=may
+  -o smtpd_tls_auth_only=yes
+{% endif %}
 {%- endif %}
 
 {% if mta_spampd %}
