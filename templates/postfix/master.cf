@@ -31,7 +31,7 @@ smtp      inet  n       -       n       -       -       smtpd {% call smtpd_args
 {% if mta_msa -%}
 submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
-  -o smtpd_client_restrictions=
+  -o smtpd_client_restrictions=permit_sasl_authenticated,reject
   -o smtpd_recipient_restrictions=
   -o smtpd_helo_restrictions=
   -o smtpd_sender_restrictions=
