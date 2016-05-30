@@ -40,15 +40,18 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_sasl_type={{ mta_msa_sasl_type }}
   -o smtpd_sasl_path={{ mta_msa_sasl_path }}
-{%- endif %}
+{% endif %}
 {% if mta_dkim and mta_msa_dkim %}
   -o smtpd_milters=inet:127.0.0.1:8891
-{%- endif %}
-{% if mta_msa_tls | default(mta_tls)%}
+{% endif %}
+{% if mta_msa_tls | default(mta_tls) %}
   -o smtpd_tls_cert_file=/etc/postfix/msa.crt
   -o smtpd_tls_key_file=/etc/postfix/msa.key
   -o smtpd_tls_security_level=may
   -o smtpd_tls_auth_only=yes
+{% endif %}
+{% if mta_msa_privacy %}
+  -o cleanup_service_name=privacy-cleanup
 {% endif %}
 {%- endif %}
 
@@ -96,6 +99,12 @@ dovecot   unix  -       n       n       -       -       pipe
     flags=DRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
 {% endif %}
 {% endif %}
+{% if mta_msa_privacy %}
+privacy-cleanup unix n - - - 0 cleanup
+    -o syslog_name=postfix/privacy-cleanup
+    -o header_checks=pcre:/etc/postfix/privacy_header_checks.pcre
+{% endif %}
+
 #
 # ====================================================================
 # Interfaces to non-Postfix software. Be sure to examine the manual

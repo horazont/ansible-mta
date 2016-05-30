@@ -38,6 +38,12 @@ mta_msa_smtpd_client_restrictions: []
 mta_msa_sasl_type: False
 mta_msa_sasl_path: False
 mta_msa_dkim: False
+mta_msa_privacy: False
+mta_msa_priavcy_strip_headers:
+- X-Mailer
+- X-Enigmail
+- X-Originating-IP
+- User-Agent
 
 # OpenDKIM settings
 mta_dkim: False

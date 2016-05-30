@@ -1,0 +1,5 @@
+/^\s*(Received: from)[^\n]*(.*for <.*@.*)/ REPLACE $1 [::1] (localhost [::1])$2
+/^\s*Mime-Version: 1.0.*/ REPLACE Mime-Version: 1.0
+{% for header in mta_msa_privacy_strip_headers %}
+/^\s*{{ header }}:/ IGNORE
+{% endfor %}

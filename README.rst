@@ -254,6 +254,20 @@ authentication is required on the submission port to allow sending mail.
 * ``mta_msa_dkim`` (bool): Enable the OpenDKIM milter for mail submitted via the
   MSA. Requires ``mta_dkim`` to be configured properly.
 
+* ``mta_msa_privacy`` (bool, default False): if enabled, IPs are removed from
+  ``Received`` headers on mail received on the submission port. Several other
+  headers are stripped too, which are also configured with
+  ``mta_msa_privacy_strip_headers``.
+
+* ``mta_msa_privacy_strip_headers`` (list of strings): if ``mta_msa_privacy`` is
+  enabled, the header names in this list are removed from mails received for
+  submission. The default list consists of:
+
+  - X-Mailer
+  - X-Enigmail
+  - X-Originating-Ip
+  - User-Agent
+
 TLS
 ---
 
