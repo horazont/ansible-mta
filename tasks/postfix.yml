@@ -7,10 +7,10 @@
   dnf: name={{ item }} state=latest
   when: "ansible_distribution in ['Fedora']"
   with_items:
-    - postfix
+  - postfix
   tags:
-    - postfix
-    - yum
+  - postfix
+  - yum
 
 - name: install additional packages via yum
   dnf: name={{ item }} state=latest
@@ -25,11 +25,14 @@
   apt: name={{ item }} state=latest
   when: "ansible_distribution in ['Ubuntu', 'Debian']"
   with_items:
-    - postfix
-    - postfix-ldap
+  - postfix
+  - postfix-ldap
+  - postfix-pcre
   tags:
-    - postfix
-    - apt
+  - postfix
+  - apt
+  notify:
+  - restart postfix
 
 - name: install spampd (redhat)
   dnf: name={{ item }} state=latest
