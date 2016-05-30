@@ -155,12 +155,13 @@
   tags:
     - postfix
 
-- name: upload certificate
-  copy: content="{{ mta_tls_cert }}"
-        dest=/etc/postfix/mta.crt
-        owner=root
-        group=root
-        mode=ugo=r
+- name: upload MTA certificate
+  copy:
+    content: "{{ mta_tls_cert }}"
+    dest: /etc/postfix/mta.crt
+    owner: root
+    group: root
+    mode: ugo=r
   when: mta_listen and mta_tls
   notify:
   - reload postfix
@@ -168,13 +169,43 @@
   - postfix
   - certificate
 
-- name: upload key
-  copy: content="{{ mta_tls_key }}"
-        dest=/etc/postfix/mta.key
-        owner=root
-        group=root
-        mode=u=r,go-rwx
+- name: upload MTA key
+  copy:
+    content: "{{ mta_tls_key }}"
+    dest: /etc/postfix/mta.key
+    owner: root
+    group: root
+    mode: u=r,go-rwx
   when: mta_listen and mta_tls
+  notify:
+  - reload postfix
+  tags:
+  - postfix
+  - certificate
+  - requires-secrets
+
+- name: upload MSA certificate
+  copy:
+    content: "{{ mta_msa_tls_cert }}"
+    dest: /etc/postfix/msa.crt
+    owner: root
+    group: root
+    mode: ugo=r
+  when: mta_msa and mta_msa_tls
+  notify:
+  - reload postfix
+  tags:
+  - postfix
+  - certificate
+
+- name: upload MSA key
+  copy:
+    content: "{{ mta_msa_tls_key }}"
+    dest: /etc/postfix/msa.key
+    owner: root
+    group: root
+    mode: u=r,go-rwx
+  when: mta_msa and mta_msa_tls
   notify:
   - reload postfix
   tags:
