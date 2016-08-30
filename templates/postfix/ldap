@@ -6,3 +6,12 @@ result_attribute = {{ item.result_attributes | default(["uid"]) | join(", ") }}
 domain = {{ item.domains | join(" ") }}
 {% endif %}
 bind = no
+{% if item.special_result_attribute | default(False) %}
+special_result_attribute = {{ item.special_result_attribute }}
+{% endif %}
+{% if item.terminal_result_attributes | default(False) %}
+terminal_result_attribute = {{ item.terminal_result_attributes | join(", ") }}
+{% endif %}
+{% if item.result_format | default(False) %}
+result_format = {{ item.result_format }}
+{% endif %}
