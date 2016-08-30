@@ -47,7 +47,7 @@ submission inet n       -       n       -       -       smtpd
 {% if mta_msa_tls | default(mta_tls) %}
   -o smtpd_tls_cert_file=/etc/postfix/msa.crt
   -o smtpd_tls_key_file=/etc/postfix/msa.key
-  -o smtpd_tls_security_level=may
+  -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_auth_only=yes
 {% endif %}
 {% if mta_msa_privacy %}
