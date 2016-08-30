@@ -65,6 +65,20 @@ relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 {% if mta_transport_map -%}
 # origin: mta_transport_map
 transport_maps = hash:/etc/postfix/transports
+{% elif mta_transport_maps -%}
+# origin: mta_transport_maps
+transport_maps =
+{% for map in mta_transport_maps %}
+  {{ map }}
+{% endfor %}
+{%- endif %}
+
+{% if mta_mailbox_transport_maps -%}
+# origin: mta_mailbox_transport_maps
+mailbox_transport_maps =
+{% for map in mta_mailbox_transport_maps %}
+  {{ map }}
+{% endfor %}
 {%- endif %}
 
 {% if mta_listen and mta_tls %}
@@ -190,4 +204,8 @@ smtp_sasl_password_maps = hash:{{ mta_relayhost_auth.mapfile }}
 smtp_sasl_mechansim_filter =
 smtp_sasl_security_options =
 {% endif %}
+{% endif %}
+
+{% if mta_recipient_delimiter %}
+recipient_delimiter = {{ mta_recipient_delimiter }}
 {% endif %}

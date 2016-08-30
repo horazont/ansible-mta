@@ -26,6 +26,10 @@ mta_listen_interfaces:
 mta_soft_bounce: False
 mta_relay_domains: []
 mta_virtual_maps: {}
+mta_recipient_delimiter: null
+mta_transport_maps: []
+mta_mailbox_transport_maps: []
+mta_generic_maps: []
 
 # Local mail delivery
 mta_delivery_type: "local"
