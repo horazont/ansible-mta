@@ -48,6 +48,8 @@ mta_msa_privacy_strip_headers:
 - X-Enigmail
 - X-Originating-IP
 - User-Agent
+mta_msa_cert_file: False
+mta_msa_key_file: False
 
 # OpenDKIM settings
 mta_dkim: False

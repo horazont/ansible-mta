@@ -218,7 +218,23 @@
     owner: root
     group: root
     mode: ugo=r
-  when: mta_msa and mta_msa_tls
+  when: "{{ mta_msa and mta_msa_tls and not mta_msa_tls_cert_file }}"
+  notify:
+  - reload postfix
+  tags:
+  - postfix
+  - certificate
+
+- name: link MSA certificate
+  file:
+    state: link
+    src: "{{ mta_msa_tls_cert_file }}"
+    dest: /etc/postfix/msa.crt
+    force: yes
+    owner: root
+    group: root
+    mode: ugo=r
+  when: "{{ mta_msa and mta_msa_tls and not not mta_msa_tls_cert_file }}"
   notify:
   - reload postfix
   tags:
@@ -232,13 +248,29 @@
     owner: root
     group: root
     mode: u=r,go-rwx
-  when: mta_msa and mta_msa_tls
+  when: "{{ mta_msa and mta_msa_tls and not mta_msa_tls_key_file }}"
   notify:
   - reload postfix
   tags:
   - postfix
   - certificate
   - requires-secrets
+
+- name: link MSA key
+  file:
+    state: link
+    src: "{{ mta_msa_tls_key_file }}"
+    dest: /etc/postfix/msa.key
+    force: yes
+    owner: root
+    group: root
+    mode: ugo=r
+  when: "{{ mta_msa and mta_msa_tls and not not mta_msa_tls_key_file }}"
+  notify:
+  - reload postfix
+  tags:
+  - postfix
+  - certificate
 
 - name: configure spampd (redhat)
   template: src=spampd-fedora.j2
