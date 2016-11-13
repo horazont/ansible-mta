@@ -315,3 +315,26 @@ Safety nets and misc
 
 * ``mta_override_hostname`` (string, optional): If set, this is used as value
   for myhostname instead of the value of ``inventory_hostname``.
+
+
+IPTables based traffic accounting
+---------------------------------
+
+When ferm is used (``ferm`` is set to true), the following switches can be used
+to enable the generation of no-op iptables rules whose packet and bytes counters
+can be used for traffic accounting.
+
+* ``mta_iptables_inbound_accounting`` (bool, default false): Add rules to
+  account for traffic to and from the local port 25. This effectively tracks
+  inbound SMTP traffic.
+
+* ``mta_iptables_delivery_accounting`` (bool, default false): Add rules to
+  account for traffic to and from remote port 25 and 465. This effectively
+  tracks outbound SMTP traffic.
+
+  Note that if other applications than postfix are sending outbound mails, that
+  traffic will also be caught by these rules.
+
+* ``mta_iptables_submission_accounting`` (bool, default false): Add rules to
+  account for traffic to and from the local 587 port. This effectively tracks
+  submission SMTP traffic.
