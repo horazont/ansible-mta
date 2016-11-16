@@ -1,0 +1,17 @@
+---
+- name: "hash: create table"
+  template:
+    src: "postfix/table/{{ item.type }}"
+    dest: "{{ item.path | default('/etc/postfix/maps/'+(item.name | default(''))) }}"
+    owner: postfix
+    group: postfix
+    mode: ug=r,o-rwx
+  with_items: "{{ mta_hashes }}"
+  register: tables
+
+- name: "hash: compile table"
+  command: "\"{{ 'postalias' if item.item.type == 'alias-hash' else 'postmap' }}\" \"{{ item.item.path | default('/etc/postfix/maps/'+(item.item.name|default(''))) }}\""
+  with_items: "{{ tables.results | default([]) }}"
+  when: "{{ item | changed or map_infrastructure | changed }}"
+  notify:
+  - reload postfix

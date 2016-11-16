@@ -1,3 +1,9 @@
+{% macro string_list(l, caller=None) %}
+{{ caller() }} = {% for item in l %}
+  {{ item }}
+{% endfor %}
+{% endmacro %}
+
 # configuration
 myhostname = {{ mta_override_hostname | default(inventory_hostname) }}
 myorigin = $myhostname
@@ -15,6 +21,11 @@ mydestination = $myhostname
 mailbox_command = /usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -a ${recipient}
 {% endif %}
 
+{% elif mta_delivery_type == "lmtp" %}
+# mta_delivery_type is lmtp
+{% if mta_delivery_agent == "dovecot" %}
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+{% endif %}
 {% else %}
 # mta_delivery_type is agent_transport
 local_transport = {{ mta_delivery_agent }}
@@ -32,11 +43,7 @@ local_recipient_maps =
 
 {% if mta_alias_maps %}
 # mta_alias_maps is set
-alias_databases =
-{% for item in mta_alias_maps %}
-  hash:{{ item.file }}
-{% endfor %}
-alias_maps = $alias_databases
+{% call string_list(mta_alias_maps) %}alias_databases{% endcall %}
 {% else %}
 # mta_alias_maps is empty
 alias_maps =
@@ -62,23 +69,13 @@ soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
 relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 {%- endif %}
 
-{% if mta_transport_map -%}
-# origin: mta_transport_map
-transport_maps = hash:/etc/postfix/transports
-{% elif mta_transport_maps -%}
+{% if mta_transport_maps -%}
 # origin: mta_transport_maps
-transport_maps =
-{% for map in mta_transport_maps %}
-  {{ map }}
-{% endfor %}
+{% call string_list(mta_transport_maps) %}transport_maps{% endcall %}
 {%- endif %}
 
 {% if mta_mailbox_transport_maps -%}
 # origin: mta_mailbox_transport_maps
-mailbox_transport_maps =
-{% for map in mta_mailbox_transport_maps %}
-  {{ map }}
-{% endfor %}
 {%- endif %}
 
 {% if mta_listen and mta_tls %}
@@ -105,10 +102,7 @@ smtpd_tls_loglevel = 1
 mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
-smtpd_client_restrictions =
-{% for restriction in mta_smtpd_client_restrictions %}
-    {{ restriction }}
-{% endfor %}
+{% call string_list(mta_smtpd_client_restrictions) %}smtpd_client_restrictions{% endcall %}
 
 # origin: mta_smtpd_helo_required
 smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required else "no" }}
@@ -116,50 +110,23 @@ smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required else "no" }}
 strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes else "no" }}
 
 # origin: mta_smtpd_helo_restrictions
-smtpd_helo_restrictions =
-{% for restriction in mta_smtpd_helo_restrictions %}
-    {{ restriction }}
-{% endfor %}
+{% call string_list(mta_smtpd_helo_restrictions) %}smtpd_helo_restrictions{% endcall %}
 
 # origin: mta_smtpd_sender_restrictions
-smtpd_sender_restrictions =
-{% for restriction in mta_smtpd_sender_restrictions %}
-    {{ restriction }}
-{% endfor %}
+{% call string_list(mta_smtpd_sender_restrictions) %}smtpd_sender_restrictions{% endcall %}
 
 # origin: mta_smtpd_relay_restrictions
-smtpd_relay_restrictions =
-{% for restriction in mta_smtpd_relay_restrictions %}
-    {{ restriction }}
-{% endfor %}
+{% call string_list(mta_smtpd_relay_restrictions) %}smtpd_relay_restrictions{% endcall %}
 
 # origin: mta_smtpd_recipient_restrictions
-smtpd_recipient_restrictions =
-{% for restriction in mta_smtpd_recipient_restrictions %}
-    {{ restriction }}
-{% endfor %}
-
-{% macro virtual_maps(arg=None, caller=None) %}
-{% for item in mta_virtual_maps %}
-{% if item is string %}
-    {{ item }}
-{% elif item is mapping %}
-{% if (item.type | default("hash")) == "hash" %}
-    hash:/etc/postfix/virtual_hash_{{ item.domain }}
-{% elif item.type == "ldap" %}
-    ldap:/etc/postfix/virtual_ldap{{ arg or "" }}_{{ item.name }}
-{% elif item.type == "file" %}
-    {{ item.file_type | default("hash") }}:{{ item.file }}
-{% endif -%}
-{% endif -%}
-{% endfor -%}
-{% endmacro %}
+{% call string_list(mta_smtpd_recipient_restrictions) %}smtpd_recipient_restrictions{% endcall %}
 
 {% if mta_domains -%}
 # origin: mta_domains (requires mta_virtual_maps)
-virtual_alias_domains = {{ mta_domains | join(", ") }}
+virtual_mailbox_domains = {{ mta_domains | join(", ") }}
 # origin: mta_virtual_maps
-virtual_alias_maps = {% call virtual_maps() %}{% endcall %}
+{% call string_list(mta_virtual_maps) %}virtual_mailbox_maps{% endcall %}
+{% call string_list(mta_virtual_alias_maps) %}virtual_alias_maps{% endcall %}
 {% endif %}
 
 {% if mta_message_size_limit -%}
@@ -209,3 +176,15 @@ smtp_sasl_security_options =
 {% if mta_recipient_delimiter %}
 recipient_delimiter = {{ mta_recipient_delimiter }}
 {% endif %}
+
+
+# submission settings which may contain whitespace
+
+# origin: mta_msa_recipient_restrictions
+{% call string_list(mta_msa_recipient_restrictions) %}submission_recipient_restrictions{% endcall %}
+
+# origin: mta_msa_sender_restrictions
+{% call string_list(mta_msa_sender_restrictions) %}submission_sender_restrictions{% endcall %}
+
+# origin: mta_msa_sender_login_maps
+{% call string_list(mta_msa_sender_login_maps) %}submission_sender_login_maps{% endcall %}

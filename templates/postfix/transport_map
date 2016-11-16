@@ -1,4 +1,0 @@
-### Managed by ansible ###
-{% for entry in mta_transport_map | dictsort(by='key') %}
-{{ entry[0] }}      {{ entry[1] }}
-{% endfor %}

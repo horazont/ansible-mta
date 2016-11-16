@@ -1,5 +1,4 @@
 ---
-mta_alias_maps: []
 mta_relayhost: False
 mta_relayhost_auth: False
 mta_listen: True
@@ -12,24 +11,24 @@ mta_smtpd_helo_restrictions: []
 mta_domains: []
 mta_postscreen: False
 mta_delay_warning: False
-mta_transport_map: {}
 mta_tls: True
 mta_tls_security_level: "may"
 mta_tls_log: False
 mta_mynetworks: []
 mta_smtpd_helo_required: False
 mta_strict_rfc821_envelopes: False
-mta_domains: []
 mta_message_size_limit: False
 mta_listen_interfaces:
 - all
 mta_soft_bounce: False
 mta_relay_domains: []
-mta_virtual_maps: {}
+mta_maps: {}
+mta_ldaps: {}
+mta_virtual_maps: []
+mta_alias_maps: []
 mta_recipient_delimiter: null
 mta_transport_maps: []
 mta_mailbox_transport_maps: []
-mta_generic_maps: []
 
 # Local mail delivery
 mta_delivery_type: "local"
@@ -50,6 +49,7 @@ mta_msa_privacy_strip_headers:
 - User-Agent
 mta_msa_cert_file: False
 mta_msa_key_file: False
+mta_msa_recipient_restrictions: []
 
 # OpenDKIM settings
 mta_dkim: False

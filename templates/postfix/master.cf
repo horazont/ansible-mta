@@ -32,10 +32,11 @@ smtp      inet  n       -       n       -       -       smtpd {% call smtpd_args
 submission inet n       -       n       -       -       smtpd
   -o smtpd_tls_security_level=encrypt
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject
-  -o smtpd_recipient_restrictions=
+  -o smtpd_recipient_restrictions=$submission_recipient_restrictions
   -o smtpd_helo_restrictions=
-  -o smtpd_sender_restrictions=
+  -o smtpd_sender_restrictions=$submission_sender_restrictions
   -o smtpd_relay_restrictions=permit_sasl_authenticated,defer_unauth_destination
+  -o smtpd_sender_login_maps=$submission_sender_login_maps
 {% if mta_msa_sasl_type and mta_msa_sasl_path %}
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_sasl_type={{ mta_msa_sasl_type }}
@@ -89,13 +90,12 @@ error     unix  -       -       n       -       -       error
 retry     unix  -       -       n       -       -       error
 discard   unix  -       -       n       -       -       discard
 local     unix  -       n       n       -       -       local
-virtual   unix  -       n       n       -       -       virtual
 lmtp      unix  -       -       n       -       -       lmtp
 anvil     unix  -       -       n       -       1       anvil
 scache    unix  -       -       n       -       1       scache
 {% if mta_delivery_type == "agent_transport" and mta_delivery_agent %}
-dovecot   unix  -       n       n       -       -       pipe
 {% if mta_delivery_agent == "dovecot" %}
+dovecot   unix  -       n       n       -       -       pipe
     flags=DRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
 {% endif %}
 {% endif %}

@@ -72,101 +72,46 @@
   notify:
     - reload postfix
 
-- name: update alias tables
-  template: src=postfix/aliases
-            dest={{ item.file }}
-            mode="{{ item.mode | default('ug=rw,o=r') }}"
-            owner={{ item.owner | default("root") }}
-            group={{ item.group | default("root") }}
-  with_items: "{{ mta_alias_maps }}"
-  when: 'item.map | default(False) != False'
+- name: create map directory
+  file:
+    state: directory
+    path: /etc/postfix/maps/
+    owner: postfix
+    group: postfix
+    mode: ug=rwx,o-rwx
+  register: map_infrastructure
   tags:
-    - postfix
-    - postfix_virtual_map
-  register: alias_map_update
+  - postfix
+  - postfix-map
+  - postfix-map-hash
+  - postfix-map-ldap
 
-- name: compile alias tables
-  command: postalias {{ item.item.file }}
-  when: item | changed
-  with_items: "{{ alias_map_update.results | default([]) }}"
-  notify:
-    - reload postfix
+- name: hack to ensure that aliases.db can be written by postfix
+  command: chown postfix:postfix /etc/aliases.db
+  failed_when: False
   tags:
-    - postfix
-    - postfix_virtual_map
+  - postfix
+  - postfix-map
+  - postfix-map-hash
 
-- name: update virtual tables
-  template: src=postfix/virtual dest=/etc/postfix/virtual_hash_{{ item.domain }}
-  when: 'item is mapping and (item.type | default("hash")) == "hash" and (item.map | default(False)) != False'
-  with_items: "{{ mta_virtual_maps }}"
+- name: build hashes
+  include: postfix-build-hashes.yml
   tags:
-    - postfix
-    - postfix_virtual_map
-  register: virtual_map_update
+  - postfix
+  - postfix-map
+  - postfix-map-hash
 
-- name: compile virtual tables
-  command: postmap /etc/postfix/virtual_hash_{{ item.item.domain }}
-  when: item | changed
-  with_items: "{{ virtual_map_update.results | default([]) }}"
-  notify:
-    - reload postfix
+- name: build ldap configurations
+  include: postfix-build-ldap-configs.yml
   tags:
-    - postfix
-    - postfix_virtual_map
-
-- name: update ldap configurations
-  template: src=postfix/ldap dest=/etc/postfix/virtual_ldap_{{ item.name }}
-  when: item is mapping and (item.type | default("hash")) == "ldap"
-  with_items: "{{ mta_virtual_maps }}"
-  tags:
-    - postfix
-    - postfix_virtual_map
-
-- name: update generic virtual tables
-  template: src=postfix/virtual dest=/etc/postfix/generic_hash_{{ item.domain }}
-  when: 'item is mapping and (item.type | default("hash")) == "hash" and (item.map | default(False)) != False'
-  with_items: "{{ mta_generic_maps }}"
-  tags:
-    - postfix
-    - postfix_virtual_map
-  register: generic_map_update
-
-- name: compile generic virtual tables
-  command: postmap /etc/postfix/generic_hash_{{ item.item.domain }}
-  when: item | changed
-  with_items: "{{ generic_map_update.results | default([]) }}"
-  notify:
-    - reload postfix
-  tags:
-    - postfix
-    - postfix_virtual_map
-
-- name: update generic ldap configurations
-  template: src=postfix/ldap dest=/etc/postfix/generic_ldap_{{ item.name }}
-  when: item is mapping and (item.type | default("hash")) == "ldap"
-  with_items: "{{ mta_generic_maps }}"
-  tags:
-    - postfix
-    - postfix_virtual_map
-
-- name: update transport map
-  template: src=postfix/transport_map dest=/etc/postfix/transports
-  when: mta_transport_map is mapping
-  tags:
-    - postfix
-    - postfix_transport_map
-  register: postfix_transport_map
-
-- name: compile transport map
-  command: postmap /etc/postfix/transports
-  when: postfix_transport_map | changed
-  tags:
-    - postfix
-    - postfix_transport_map
+  - postfix
+  - postfix-map
+  - postfix-map-ldap
 
 - name: deploy sasl password map for relaying
-  template: src=postfix/password_map
-            dest="{{ mta_relayhost_auth.mapfile }}"
+  template:
+    src: postfix/password_map
+    dest: "{{ mta_relayhost_auth.mapfile }}"
   when: mta_relayhost and mta_relayhost_auth
   register: password_map
   notify:
