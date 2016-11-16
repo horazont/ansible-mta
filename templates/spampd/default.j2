@@ -10,3 +10,5 @@ GROUPID=spampd
 TAGALL=1
 AUTOWHITELIST=0
 LOCALONLY={% if mta_spampd_only_local %}1{% else %}0{% endif %}
+
+ADDOPTS="{% if mta_spampd_max_size %}--maxsize {{ mta_spampd_max_size }}{% endif %}"
