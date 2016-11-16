@@ -1,58 +1,18 @@
 ---
-# - name: set hostname
-#   command: hostnamectl --static set-hostname {{ inventory_hostname }}
-
-
-- name: install packages via yum
-  dnf: name={{ item }} state=latest
-  when: "ansible_distribution in ['Fedora']"
-  with_items:
-  - postfix
-  tags:
-  - postfix
-  - yum
-
-- name: install additional packages via yum
-  dnf: name={{ item }} state=latest
-  when: "ansible_distribution in ['Fedora'] and (ansible_distribution_version | int) >= 23"
-  with_items:
-  - postfix-ldap
-  tags:
-  - postfix
-  - yum
-
-- name: install packages via apt
-  apt: name={{ item }} state=latest
-  when: "ansible_distribution in ['Ubuntu', 'Debian']"
+- name: "postfix: install packages via apt"
+  apt:
+    name: "{{ item }}"
+    state: latest
   with_items:
   - postfix
   - postfix-ldap
   - postfix-pcre
   tags:
-  - postfix
   - apt
   notify:
   - restart postfix
 
-- name: install spampd (redhat)
-  dnf: name={{ item }} state=latest
-  when: mta_spampd and ansible_os_family == "RedHat"
-  with_items:
-  - spampd
-  tags:
-  - postfix
-  - yum
-
-- name: install spampd (debian)
-  apt: name={{ item }} state=latest
-  when: mta_spampd and ansible_os_family == "Debian"
-  with_items:
-  - spampd
-  tags:
-  - postfix
-  - yum
-
-- name: deploy privacy header checks
+- name: "postfix: deploy privacy header checks"
   template:
     src: postfix/privacy_header_checks.pcre
     dest: /etc/postfix/
@@ -62,17 +22,17 @@
   notify:
   - reload postfix
 
-- name: instanciate config files
-  template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
+- name: "postfix: instanciate config files"
+  template:
+    dest: "/etc/postfix/{{ item }}"
+    src: "postfix/{{ item }}"
   with_items:
-    - master.cf
-    - main.cf
-  tags:
-    - postfix
+  - master.cf
+  - main.cf
   notify:
-    - reload postfix
+  - reload postfix
 
-- name: create map directory
+- name: "postfix: create map directory"
   file:
     state: directory
     path: /etc/postfix/maps/
@@ -81,53 +41,45 @@
     mode: ug=rwx,o-rwx
   register: map_infrastructure
   tags:
-  - postfix
   - postfix-map
   - postfix-map-hash
   - postfix-map-ldap
 
-- name: hack to ensure that aliases.db can be written by postfix
+- name: "postfix: hack to ensure that aliases.db can be written by postfix"
   command: chown postfix:postfix /etc/aliases.db
   failed_when: False
   tags:
-  - postfix
   - postfix-map
   - postfix-map-hash
 
-- name: build hashes
+- name: "postfix: build hashes"
   include: postfix-build-hashes.yml
   tags:
-  - postfix
   - postfix-map
   - postfix-map-hash
 
-- name: build ldap configurations
+- name: "postfix: build ldap configurations"
   include: postfix-build-ldap-configs.yml
   tags:
-  - postfix
   - postfix-map
   - postfix-map-ldap
 
-- name: deploy sasl password map for relaying
+- name: "postfix: deploy sasl password map for relaying"
   template:
     src: postfix/password_map
     dest: "{{ mta_relayhost_auth.mapfile }}"
   when: mta_relayhost and mta_relayhost_auth
   register: password_map
   notify:
-    - reload postfix
-  tags:
-    - postfix
+  - reload postfix
 
-- name: compile sasl password map for relaying
+- name: "postfix: compile sasl password map for relaying"
   command: postmap "{{ mta_relayhost_auth.mapfile }}"
   when: password_map | changed
   notify:
-    - reload postfix
-  tags:
-    - postfix
+  - reload postfix
 
-- name: upload MTA certificate
+- name: "postfix: upload MTA certificate"
   copy:
     content: "{{ mta_tls_cert }}"
     dest: /etc/postfix/mta.crt
@@ -138,10 +90,9 @@
   notify:
   - reload postfix
   tags:
-  - postfix
   - certificate
 
-- name: upload MTA key
+- name: "postfix: upload MTA key"
   copy:
     content: "{{ mta_tls_key }}"
     dest: /etc/postfix/mta.key
@@ -152,11 +103,10 @@
   notify:
   - reload postfix
   tags:
-  - postfix
   - certificate
   - requires-secrets
 
-- name: upload MSA certificate
+- name: "postfix: upload MSA certificate"
   copy:
     content: "{{ mta_msa_tls_cert }}"
     dest: /etc/postfix/msa.crt
@@ -167,10 +117,9 @@
   notify:
   - reload postfix
   tags:
-  - postfix
   - certificate
 
-- name: link MSA certificate
+- name: "postfix: link MSA certificate"
   file:
     state: link
     src: "{{ mta_msa_tls_cert_file }}"
@@ -183,10 +132,9 @@
   notify:
   - reload postfix
   tags:
-  - postfix
   - certificate
 
-- name: upload MSA key
+- name: "postfix: upload MSA key"
   copy:
     content: "{{ mta_msa_tls_key }}"
     dest: /etc/postfix/msa.key
@@ -197,11 +145,10 @@
   notify:
   - reload postfix
   tags:
-  - postfix
   - certificate
   - requires-secrets
 
-- name: link MSA key
+- name: "postfix: link MSA key"
   file:
     state: link
     src: "{{ mta_msa_tls_key_file }}"
@@ -214,48 +161,21 @@
   notify:
   - reload postfix
   tags:
-  - postfix
   - certificate
 
-- name: configure spampd (redhat)
-  template: src=spampd-fedora.j2
-            dest=/etc/sysconfig/spampd
-  when: mta_spampd and ansible_os_family == "RedHat"
-  tags:
-  - postfix
-  notify:
-  - restart spampd
-
-- name: configure spampd (debian)
-  template: src=spampd-debian.j2
-            dest=/etc/default/spampd
-  when: mta_spampd and ansible_os_family == "Debian"
-  tags:
-  - postfix
-  notify:
-  - restart spampd
-
-- name: enable and start spampd
-  service: name=spampd state=started enabled=yes
-  when: mta_spampd
-  tags:
-  - postfix
-
 - include: postfix-ferm.yml
-  when: ferm
+  when: "{{ ferm | default(False) }}"
   tags:
   - ferm
-  - postfix
 
-- name: start and enable postfix
-  service: name=postfix state=started enabled=yes
-  tags:
-    - postfix
+- name: "postfix: start and enable postfix"
+  service:
+    name: postfix
+    state: started
+    enabled: yes
 
-- name: upload collectd scripts
+- name: "postfix: upload collectd scripts"
   copy:
     src: queuesize.sh
     dest: /usr/local/bin/
     mode: ugo=rx
-  tags:
-  - postfix

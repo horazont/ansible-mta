@@ -1,0 +1,22 @@
+---
+- name: "spampd: install spampd"
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - spampd
+  tags:
+  - apt
+
+- name: "spampd: configure spampd"
+  template:
+    src: spampd/default.j2
+    dest: /etc/default/spampd
+  notify:
+  - restart spampd
+
+- name: "spampd: enable and start spampd"
+  service:
+    name: spampd
+    state: started
+    enabled: yes

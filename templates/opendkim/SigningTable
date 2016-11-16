@@ -1,5 +1,0 @@
-{% if mta_dkim_sign -%}
-{%- for domain in mta_dkim_domains %}
-*@{{ domain.name }} {{ domain.key }}._domainkey.{{ domain.name }}
-{% endfor -%}
-{%- endif %}

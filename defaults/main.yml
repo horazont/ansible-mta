@@ -40,7 +40,6 @@ mta_msa: False
 mta_msa_smtpd_client_restrictions: []
 mta_msa_sasl_type: False
 mta_msa_sasl_path: False
-mta_msa_dkim: False
 mta_msa_privacy: False
 mta_msa_privacy_strip_headers:
 - X-Mailer
@@ -50,13 +49,8 @@ mta_msa_privacy_strip_headers:
 mta_msa_cert_file: False
 mta_msa_key_file: False
 mta_msa_recipient_restrictions: []
-
-# OpenDKIM settings
-mta_dkim: False
-mta_dkim_sign: False
-mta_dkim_verify: True
-mta_dkim_selector: "deployment"
-mta_dkim_domains: []
+mta_msa_sender_restrictions: []
+mta_msa_sender_login_maps: []
 
 # spampd-integration
 mta_spampd: False

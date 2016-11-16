@@ -1,4 +1,11 @@
 ---
+- include: spampd.yml
+  when: mta_spampd
+  tags:
+  - mta
+  - spampd
+
 - include: postfix.yml
-- include: opendkim.yml
-  when: mta_dkim | default(False)
+  tags:
+  - mta
+  - postfix
