@@ -25,6 +25,7 @@ mta_relay_domains: []
 mta_maps: {}
 mta_ldaps: {}
 mta_virtual_maps: []
+mta_virtual_alias_maps: []
 mta_alias_maps: []
 mta_recipient_delimiter: null
 mta_transport_maps: []

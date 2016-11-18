@@ -37,6 +37,7 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_sender_restrictions=$submission_sender_restrictions
   -o smtpd_relay_restrictions=permit_sasl_authenticated,defer_unauth_destination
   -o smtpd_sender_login_maps=$submission_sender_login_maps
+  -o syslog_name=postfix/submission
 {% if mta_msa_sasl_type and mta_msa_sasl_path %}
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_sasl_type={{ mta_msa_sasl_type }}
@@ -66,6 +67,7 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_recipient_restrictions=permit_mynetworks,reject
   -o mynetworks=127.0.0.0/8
   -o receive_override_options=no_unknown_recipient_checks
+  -o syslog_name=postfix/post-filters
 {%- endif %}
 
 #628       inet  n       -       n       -       -       qmqpd

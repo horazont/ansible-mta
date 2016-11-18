@@ -1,7 +1,9 @@
 {% macro string_list(l, caller=None) %}
-{{ caller() }} = {% for item in l %}
+{{ caller() }} =
+{% for item in l %}
   {{ item }}
 {% endfor %}
+
 {% endmacro %}
 
 # configuration
@@ -44,6 +46,7 @@ local_recipient_maps =
 {% if mta_alias_maps %}
 # mta_alias_maps is set
 {% call string_list(mta_alias_maps) %}alias_databases{% endcall %}
+alias_maps = $alias_databases
 {% else %}
 # mta_alias_maps is empty
 alias_maps =
@@ -123,7 +126,11 @@ strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes else "no" }}
 
 {% if mta_domains -%}
 # origin: mta_domains (requires mta_virtual_maps)
+{% if mta_virtual_maps %}
 virtual_mailbox_domains = {{ mta_domains | join(", ") }}
+{% else %}
+virtual_alias_domains = {{ mta_domains | join(", ") }}
+{% endif %}
 # origin: mta_virtual_maps
 {% call string_list(mta_virtual_maps) %}virtual_mailbox_maps{% endcall %}
 {% call string_list(mta_virtual_alias_maps) %}virtual_alias_maps{% endcall %}
