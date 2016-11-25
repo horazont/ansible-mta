@@ -1,4 +1,5 @@
 ---
+mta_override_destination: []
 mta_relayhost: False
 mta_relayhost_auth: False
 mta_listen: True
@@ -30,6 +31,7 @@ mta_alias_maps: []
 mta_recipient_delimiter: null
 mta_transport_maps: []
 mta_mailbox_transport_maps: []
+mta_additional_services: []
 
 # Local mail delivery
 mta_delivery_type: "local"

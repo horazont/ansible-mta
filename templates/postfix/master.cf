@@ -96,6 +96,7 @@ lmtp      unix  -       -       n       -       -       lmtp
 anvil     unix  -       -       n       -       1       anvil
 scache    unix  -       -       n       -       1       scache
 {% if mta_delivery_type == "agent_transport" and mta_delivery_agent %}
+virtual   unix  -       n       n       -       -       virtual
 {% if mta_delivery_agent == "dovecot" %}
 dovecot   unix  -       n       n       -       -       pipe
     flags=DRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
@@ -106,6 +107,10 @@ privacy-cleanup unix n - - - 0 cleanup
     -o syslog_name=postfix/privacy-cleanup
     -o header_checks=pcre:/etc/postfix/privacy_header_checks.pcre
 {% endif %}
+{% for svc in mta_additional_services %}
+{{ svc }}
+
+{% endfor %}
 
 #
 # ====================================================================

@@ -14,7 +14,11 @@ compatibility_level = 2
 
 {% if mta_delivery_agent -%}
 # mta_delivery_agent is set ({{ mta_delivery_agent }})
+{% if mta_override_destination %}
+{% call string_list(mta_override_destination) %}mydestination{% endcall %}
+{% else %}
 mydestination = $myhostname
+{% endif %}
 
 {% if mta_delivery_type == "local" -%}
 # mta_delivery_type is local
@@ -53,6 +57,10 @@ alias_maps =
 alias_database =
 {%- endif %}
 
+{% if mta_relay_recipient_maps %}
+# origin: mta_relay_recipient_maps
+{% call string_list(mta_relay_recipient_maps) %}relay_recipient_maps{% endcall %}
+{% endif %}
 
 {% if mta_listen %}
 # mta_listen is true
@@ -79,6 +87,7 @@ relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 
 {% if mta_mailbox_transport_maps -%}
 # origin: mta_mailbox_transport_maps
+{% call string_list(mta_mailbox_transport_maps) %}mailbox_transport_maps{% endcall %}
 {%- endif %}
 
 {% if mta_listen and mta_tls %}
@@ -132,7 +141,9 @@ virtual_mailbox_domains = {{ mta_domains | join(", ") }}
 virtual_alias_domains = {{ mta_domains | join(", ") }}
 {% endif %}
 # origin: mta_virtual_maps
+{% if mta_virtual_maps %}
 {% call string_list(mta_virtual_maps) %}virtual_mailbox_maps{% endcall %}
+{% endif %}
 {% call string_list(mta_virtual_alias_maps) %}virtual_alias_maps{% endcall %}
 {% endif %}
 
