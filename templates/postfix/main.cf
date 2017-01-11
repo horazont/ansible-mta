@@ -35,6 +35,7 @@ virtual_transport = lmtp:unix:private/dovecot-lmtp
 {% else %}
 # mta_delivery_type is agent_transport
 local_transport = {{ mta_delivery_agent }}
+{{ mta_delivery_agent }}_destination_recipient_limit = 1
 {% endif %}
 
 {% else %}
