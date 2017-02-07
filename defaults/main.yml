@@ -68,3 +68,8 @@ mta_proxy_sink_port: 12500
 mta_iptables_inbound_accounting: False
 mta_iptables_outbound_accounting: False
 mta_iptables_submission_accounting: False
+
+# opendkim-integration
+mta_dkim: False
+mta_dkim_host_selector: "{{ (inventory_hostname.split('.'))[0] }}"
+mta_dkim_mailinglist_mode: False

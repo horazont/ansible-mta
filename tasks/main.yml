@@ -9,3 +9,8 @@
   tags:
   - mta
   - postfix
+
+- include: opendkim.yml
+  tags:
+  - mta
+  - opendkim

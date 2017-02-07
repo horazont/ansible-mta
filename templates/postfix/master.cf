@@ -43,8 +43,8 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_sasl_type={{ mta_msa_sasl_type }}
   -o smtpd_sasl_path={{ mta_msa_sasl_path }}
 {% endif %}
-{% if mta_dkim and mta_msa_dkim %}
-  -o smtpd_milters=inet:127.0.0.1:8891
+{% if mta_dkim %}
+  -o smtpd_milters=unix:/run/opendkim/opendkim.sock
 {% endif %}
 {% if mta_msa_tls | default(mta_tls) %}
   -o smtpd_tls_cert_file=/etc/postfix/msa.crt

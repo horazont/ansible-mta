@@ -1,0 +1,3 @@
+{% for name, info in mta_dkim_keys.items() %}
+{{ name }} {{ info.domain }}:{{ info.selector | default(mta_dkim_host_selector) }}:/etc/opendkim/keys/{{ name }}
+{% endfor %}

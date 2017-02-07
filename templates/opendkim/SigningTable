@@ -1,0 +1,3 @@
+{% for domain, key in mta_dkim_domains.items() %}
+{{ domain }} {{ key }}
+{% endfor %}

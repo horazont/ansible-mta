@@ -1,0 +1,79 @@
+---
+- name: install opendkim
+  apt:
+    name: "{{ item }}"
+    state: latest
+  notify: restart opendkim
+  with_items:
+  - opendkim
+
+- name: deploy systemd service file
+  template:
+    src: opendkim/opendkim.service
+    dest: /etc/systemd/system/
+  register: service_file
+  notify: restart opendkim
+
+- name: ensure postfix is part of opendkim group
+  user:
+    append: yes
+    name: postfix
+    state: present
+    groups: opendkim
+  notify:
+  - restart postfix
+
+- name: stop opendkim
+  service:
+    name: opendkim
+    state: stopped
+  when: "{{ service_file | changed }}"
+
+- name: reload systemd
+  command: systemctl daemon-reload
+  when: "{{ service_file | changed }}"
+  notify: restart opendkim
+
+- name: create config directory tree
+  file:
+    state: directory
+    path: /etc/opendkim/keys/
+    owner: opendkim
+    group: opendkim
+    mode: u=rx,go-rwx
+
+- name: deploy tables
+  template:
+    src: "opendkim/{{ item }}"
+    dest: "/etc/opendkim/{{ item }}"
+    owner: opendkim
+    group: opendkim
+    mode: u=r,go-rwx
+  notify: restart opendkim
+  with_items:
+  - SigningTable
+  - KeyTable
+
+- name: upload keys
+  copy:
+    content: "{{ item.value.private }}"
+    dest: "/etc/opendkim/keys/{{ item.key }}"
+    owner: opendkim
+    group: opendkim
+    mode: u=r,go-rwx
+  with_dict: "{{ mta_dkim_keys }}"
+  notify: restart opendkim
+
+- name: configure
+  template:
+    src: opendkim/opendkim.conf
+    dest: /etc/opendkim.conf
+    owner: opendkim
+    group: opendkim
+    mode: u=r,go-rwx
+  notify: restart opendkim
+
+- name: enable opendkim
+  service:
+    name: opendkim
+    enabled: yes

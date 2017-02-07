@@ -1,0 +1,14 @@
+[Unit]
+Description=OpenDKIM daemon
+After=network.target remote-fs.target nss-lookup.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=forking
+User=opendkim
+Group=opendkim
+ExecStart=/usr/sbin/opendkim -x /etc/opendkim.conf
+RuntimeDirectory=opendkim
+RuntimeDirectoryMode=0750
