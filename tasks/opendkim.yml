@@ -54,13 +54,25 @@
   - SigningTable
   - KeyTable
 
-- name: upload keys
+- name: upload explicit keys
   copy:
     content: "{{ item.value.private }}"
     dest: "/etc/opendkim/keys/{{ item.key }}"
     owner: opendkim
     group: opendkim
     mode: u=r,go-rwx
+  when: "{{ item.value.private | default(False) }}"
+  with_dict: "{{ mta_dkim_keys }}"
+  notify: restart opendkim
+
+- name: upload file keys
+  copy:
+    src: "{{ 'certs/dkim/%s/%d/%s.private' | format(item.value.domain | default(item.key), item.value.seq | default(0), item.value.selector | default(mta_dkim_host_selector)) }}"
+    dest: "/etc/opendkim/keys/{{ item.key }}"
+    owner: opendkim
+    group: opendkim
+    mode: u=r,go-rwx
+  when: "{{ not (item.value.private | default(False)) }}"
   with_dict: "{{ mta_dkim_keys }}"
   notify: restart opendkim
 

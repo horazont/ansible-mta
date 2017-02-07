@@ -1,3 +1,9 @@
+{% if mta_dkim_domains is mapping %}
 {% for domain, key in mta_dkim_domains.items() %}
 {{ domain }} {{ key }}
 {% endfor %}
+{% else %}
+{% for domain in mta_dkim_domains %}
+{{ domain }} {{ domain }}
+{% endfor %}
+{% endif %}
