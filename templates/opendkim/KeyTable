@@ -1,3 +1,3 @@
 {% for name, info in mta_dkim_keys.items() %}
-{{ name }} {{ info.domain | default(name) }}:{{ info.selector | default(mta_dkim_host_selector) }}:/etc/opendkim/keys/{{ name }}
+{{ name }} {{ info.domain | default(name) }}:{{ 'seq%d-%s' | format(info.seq | default(0), mta_dkim_host_selector) }}:/etc/opendkim/keys/{{ name }}
 {% endfor %}
