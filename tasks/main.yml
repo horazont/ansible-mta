@@ -11,6 +11,7 @@
   - postfix
 
 - include: opendkim.yml
+  when: mta_dkim
   tags:
   - mta
   - opendkim
