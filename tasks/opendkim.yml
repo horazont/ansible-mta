@@ -56,7 +56,7 @@
 
 - name: upload file keys
   copy:
-    src: "{{ 'certs/dkim/%s/%d/%s.private' | format(item.value.domain | default(item.key), item.value.seq | default(0), mta_dkim_host_selector) }}"
+    src: "{{ 'certs/dkim/%s/%d/seq%d-%s.private' | format(item.value.domain | default(item.key), item.value.seq | default(0), item.value.seq | default(0), mta_dkim_host_selector) }}"
     dest: "/etc/opendkim/keys/{{ item.key }}"
     owner: opendkim
     group: opendkim
