@@ -33,6 +33,13 @@ mta_transport_maps: []
 mta_mailbox_transport_maps: []
 mta_additional_services: []
 
+mta_global_rfc_addresses:
+  postmaster:
+  - root
+  abuse:
+  - root
+mta_domain_rfc_addresses: {}
+
 # Local mail delivery
 mta_delivery_type: "local"
 mta_delivery_agent: '{{ "" if not mta_is_destination | default(False) else "dovecot" }}'

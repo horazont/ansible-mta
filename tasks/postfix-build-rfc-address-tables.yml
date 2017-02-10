@@ -1,0 +1,15 @@
+---
+- name: "rfc addresses: create table"
+  template:
+    src: "postfix/table/rfc-addresses"
+    dest: "/etc/postfix/maps/rfc-addresses.hash"
+    owner: postfix
+    group: postfix
+    mode: ug=r,o-rwx
+  register: rfc_table
+
+- name: "rfc addresses: compile table"
+  command: "postmap /etc/postfix/maps/rfc-addresses.hash"
+  when: "{{ rfc_table | changed or map_infrastructure | changed }}"
+  notify:
+  - reload postfix

@@ -58,6 +58,13 @@
   - postfix-map
   - postfix-map-hash
 
+- name: "postfix: build rfc address tables"
+  include: postfix-build-rfc-address-tables.yml
+  tags:
+  - postfix-map
+  - postfix-map-hash
+  - postfix-map-rfc
+
 - name: "postfix: build ldap configurations"
   include: postfix-build-ldap-configs.yml
   tags:

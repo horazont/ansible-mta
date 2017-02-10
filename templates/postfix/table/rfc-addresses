@@ -1,0 +1,7 @@
+{% for domain in mta_domains %}
+{{ "#" }} RFC contact addresses for {{ domain }}
+{% for localpart, recipients in mta_global_rfc_addresses.items() %}
+{{ localpart }}@{{ domain }}  {{ recipients | join(", ") }}
+{% endfor %}
+
+{% endfor %}
