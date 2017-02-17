@@ -1,0 +1,19 @@
+---
+- name: install policy daemon
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - postfix-policyd-spf-python
+  notify:
+  - reload postfix
+
+- name: deploy configuration
+  template:
+    src: spf/policyd-spf.conf
+    dest: /etc/postfix-policyd-spf-python/policyd-spf.conf
+    owner: root
+    group: root
+    mode: u=rw,go=r
+  notify:
+  - reload postfix

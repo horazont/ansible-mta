@@ -29,6 +29,9 @@
   with_items:
   - master.cf
   - main.cf
+  tags:
+  - postfix
+  - psotfix-spf
   notify:
   - reload postfix
 
@@ -169,6 +172,12 @@
   - reload postfix
   tags:
   - certificate
+
+- include: postfix-spf-policyd.yml
+  when: "{{ mta_spf }}"
+  tags:
+  - postfix
+  - postfix-spf
 
 - include: postfix-ferm.yml
   when: "{{ ferm | default(False) }}"

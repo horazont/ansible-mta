@@ -70,6 +70,11 @@ submission inet n       -       n       -       -       smtpd
   -o syslog_name=postfix/post-filters
 {%- endif %}
 
+{% if mta_spf %}
+spf unix - n n - - spawn
+  user=nobody argv=/usr/bin/policyd-spf
+{% endif %}
+
 #628       inet  n       -       n       -       -       qmqpd
 pickup    unix  n       -       n       60      1       pickup
 cleanup   unix  n       -       n       -       0       cleanup

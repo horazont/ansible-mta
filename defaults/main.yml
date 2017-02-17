@@ -71,6 +71,9 @@ mta_spampd_max_size: 1024
 
 mta_proxy_sink_port: 12500
 
+# spf
+mta_spf: False
+
 # iptables-accounting
 mta_iptables_inbound_accounting: False
 mta_iptables_outbound_accounting: False
