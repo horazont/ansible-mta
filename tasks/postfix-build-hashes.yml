@@ -3,7 +3,7 @@
   template:
     src: "postfix/table/{{ item.type }}"
     dest: "{{ item.path | default('/etc/postfix/maps/'+(item.name | default(''))) }}"
-    owner: postfix
+    owner: root
     group: postfix
     mode: ug=r,o-rwx
   with_items: "{{ mta_hashes }}"
