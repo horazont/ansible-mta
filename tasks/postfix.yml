@@ -122,7 +122,7 @@
     dest: /etc/postfix/msa.crt
     owner: root
     group: root
-    mode: ugo=r
+    mode: u=r,go-rwx
   when: "{{ mta_msa and mta_msa_tls and not mta_msa_tls_cert_file }}"
   notify:
   - reload postfix
@@ -137,7 +137,7 @@
     force: yes
     owner: root
     group: root
-    mode: ugo=r
+    mode: u=r,go-rwx
   when: "{{ mta_msa and mta_msa_tls and not not mta_msa_tls_cert_file }}"
   notify:
   - reload postfix
@@ -166,7 +166,7 @@
     force: yes
     owner: root
     group: root
-    mode: ugo=r
+    mode: u=r,go-rwx
   when: "{{ mta_msa and mta_msa_tls and not not mta_msa_tls_key_file }}"
   notify:
   - reload postfix
