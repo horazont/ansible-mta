@@ -104,7 +104,7 @@ scache    unix  -       -       n       -       1       scache
 virtual   unix  -       n       n       -       -       virtual
 {% if mta_delivery_agent == "dovecot" %}
 dovecot   unix  -       n       n       -       -       pipe
-    flags=DRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
+    flags=ODRhuX user=vmail:mail argv=/usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/dovecot/deliver -f ${sender} -d ${user} -a ${recipient}
 {% endif %}
 {% endif %}
 {% if mta_msa_privacy %}
