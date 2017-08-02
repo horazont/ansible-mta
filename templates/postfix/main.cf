@@ -108,6 +108,15 @@ smtpd_recipient_restrictions =
     {{ restriction }}{{ "," if not loop.last else "" }}
 {% endfor %}
 
+# origin: mta_smtpd_data_restrictions
+smtpd_data_restrictions = {{ mta_smtpd_data_restrictions | join(",") }}
+
+# origin: mta_smtpd_end_of_data_restrictions
+smtpd_end_of_data_restrictions = {{ mta_smtpd_end_of_data_restrictions | join(",") }}
+
+# origin: mta_smtpd_etrn_restrictions
+smtpd_etrn_restrictions = {{ mta_smtpd_etrn_restrictions | join(",") }}
+
 {% endif %}
 
 {% if mta_domains -%}
