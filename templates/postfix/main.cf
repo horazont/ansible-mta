@@ -74,15 +74,15 @@ mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
 {% if mta_listen -%}
-smtpd_client_restrictions =
-{% for restriction in mta_smtpd_client_restrictions %}
-    {{ restriction }}{{ "," if not loop.last else "" }}
-{% endfor %}
-
 # origin: mta_smtpd_helo_required
 smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required else "no" }}
 # origin: mta_strict_rfc821_envelopes
 strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes else "no" }}
+
+smtpd_client_restrictions =
+{% for restriction in mta_smtpd_client_restrictions %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
 
 # origin: mta_smtpd_helo_restrictions
 smtpd_helo_restrictions =
