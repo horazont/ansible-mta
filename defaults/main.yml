@@ -9,6 +9,9 @@ mta_smtpd_relay_restrictions:
 - reject_unauth_destination
 mta_smtpd_recipient_restrictions: []
 mta_smtpd_helo_restrictions: []
+mta_smtpd_data_restrictions: []
+mta_smtpd_end_of_data_restrictions: []
+mta_smtpd_etrn_restrictions: []
 mta_domains: []
 mta_postscreen: False
 mta_delay_warning: False
