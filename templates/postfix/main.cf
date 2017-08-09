@@ -8,8 +8,11 @@ mydestination = $myhostname
 mailbox_command = {{ mta_mailbox_command }}
 
 alias_database =
-  {{ mta_alias_maps|map('rformat', '%(type)s:%(file)s')|join('\n  ') }}
-alias_maps = $alias_database
+  {{ mta_alias_database|map('rformat', '%(type)s:%(file)s')|join('\n  ') }}
+
+# mta_alias_maps
+alias_maps =
+  {{ mta_alias_maps|join('\n  ') }}
 
 {% else -%}
 # mta_is_destination is false, reject all mail

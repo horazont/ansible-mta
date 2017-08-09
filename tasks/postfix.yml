@@ -37,7 +37,7 @@
             mode="{{ item.mode | default('0664') }}"
             owner={{ item.owner | default("root") }}
             group={{ item.group | default("root") }}
-  with_items: "{{ mta_alias_maps }}"
+  with_items: "{{ mta_alias_database }}"
   tags:
     - postfix
     - postfix_virtual_map
