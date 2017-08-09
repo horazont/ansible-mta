@@ -16,8 +16,8 @@ alias_database =
   hash:/etc/postfix/aliases
 {% for item in mta_alias_maps %}
   hash:{{ item.file }}
-mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
 {% endfor %}
+mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
 alias_maps = $alias_database
 {% else %}
 # mta_is_destination is false or mta_alias_map is unset, reject all mail
