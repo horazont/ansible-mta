@@ -14,7 +14,6 @@ mydestination =
 {% if mta_is_destination and mta_alias_maps %}
 # mta_is_destination is true and mta_alias_maps is set
 alias_database =
-  hash:/etc/postfix/aliases
 {% for item in mta_alias_maps %}
   hash:{{ item.file }}
 {% endfor %}
