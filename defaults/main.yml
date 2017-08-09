@@ -25,6 +25,7 @@ mta_listen_interfaces:
 mta_soft_bounce: False
 mta_relay_domains: []
 mta_virtual_maps: []
+mta_mailbox_command: null
 
 # Mail Submission Agent settings
 mta_msa: False

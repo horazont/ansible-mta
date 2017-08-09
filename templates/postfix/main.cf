@@ -5,6 +5,7 @@ myorigin = $myhostname
 {% if mta_is_destination -%}
 # mta_is_destination = True
 mydestination = $myhostname
+mailbox_command = {{ mta_mailbox_command }}
 {% else %}
 # mta_is_destination = False
 mydestination =
@@ -17,7 +18,6 @@ alias_database =
 {% for item in mta_alias_maps %}
   hash:{{ item.file }}
 {% endfor %}
-mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
 alias_maps = $alias_database
 {% else %}
 # mta_is_destination is false or mta_alias_map is unset, reject all mail
