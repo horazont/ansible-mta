@@ -18,7 +18,7 @@ alias_database =
   hash:{{ item.file }}
 mailbox_command = /usr/lib/dovecot/dovecot-lda -f "$SENDER" -a "$RECIPIENT"
 {% endfor %}
-alias_maps = $alias_databases
+alias_maps = $alias_database
 {% else %}
 # mta_is_destination is false or mta_alias_map is unset, reject all mail
 # (no sensible destinations)
