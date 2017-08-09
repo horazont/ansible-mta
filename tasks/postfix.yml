@@ -45,7 +45,7 @@
 
 - name: compile alias tables
   command: postalias "{{ '%s:%s'|format(item.item.type, item.item.file) }}"
-  when: "{{ item | changed }}"
+  when: item | changed
   with_items: "{{ alias_map_update.results | default([]) }}"
   notify:
     - reload postfix
