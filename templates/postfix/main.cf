@@ -6,19 +6,15 @@ myorigin = $myhostname
 # mta_is_destination = True
 mydestination = $myhostname
 mailbox_command = {{ mta_mailbox_command }}
-{% else %}
-# mta_is_destination = False
-mydestination =
-{% endif %}
 
-{% if mta_is_destination and mta_alias_maps %}
-# mta_is_destination is true and mta_alias_maps is set
 alias_database =
   {{ mta_alias_maps|map('rformat', '%(type)s:%(file)s')|join('\n  ') }}
 alias_maps = $alias_database
-{% else %}
-# mta_is_destination is false or mta_alias_map is unset, reject all mail
+
+{% else -%}
+# mta_is_destination is false, reject all mail
 # (no sensible destinations)
+mydestination =
 local_transport = error:5.1.1 Mailbox unavailable
 local_recipient_maps =
 alias_maps =
