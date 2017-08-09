@@ -44,7 +44,7 @@
   register: alias_map_update
 
 - name: compile alias tables
-  command: postalias {{ item.item.file }}
+  command: postalias "{{ '%s:%s'|format(item.item.type, item.item.file) }}"
   when: "{{ item | changed }}"
   with_items: "{{ alias_map_update.results | default([]) }}"
   notify:

@@ -14,9 +14,7 @@ mydestination =
 {% if mta_is_destination and mta_alias_maps %}
 # mta_is_destination is true and mta_alias_maps is set
 alias_database =
-{% for item in mta_alias_maps %}
-  hash:{{ item.file }}
-{% endfor %}
+  {{ mta_alias_maps|map('rformat', '%(type)s:%(file)s')|join('\n  ') }}
 alias_maps = $alias_database
 {% else %}
 # mta_is_destination is false or mta_alias_map is unset, reject all mail
