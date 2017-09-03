@@ -31,6 +31,35 @@
   notify:
     - restart postfix
 
+- name: create access database directories
+  file: path="/etc/postfix/{{ item }}"
+        state=directory
+        mode=0775
+        owner=root
+        group=root
+  with_items:
+    - access.d
+
+- name: update access databases
+  template: src=postfix/access
+            dest={{ item.key }}
+            mode="{{ item.mode | default('0664') }}"
+            owner={{ item.owner | default("root") }}
+            group={{ item.group | default("root") }}
+  with_dict: "{{ mta_access_databases }}"
+  tags:
+    - postfix
+  register: access_database_update
+
+- name: compile access databases
+  command: postmap "{{ '%s:%s'|format(item.item.value.type, item.item.key) }}"
+  when: item | changed
+  with_items: "{{ access_database_update.results | default([]) }}"
+  notify:
+    - reload postfix
+  tags:
+    - postfix
+
 - name: update alias tables
   template: src=postfix/aliases
             dest={{ item.file }}

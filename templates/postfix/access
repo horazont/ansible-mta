@@ -1,0 +1,3 @@
+{% for pattern, action in item.value.contents %}
+{{ pattern }} {{ action }}
+{% endfor %}

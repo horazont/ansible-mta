@@ -1,4 +1,5 @@
 ---
+mta_access_databases: {}
 mta_alias_database: []
 mta_alias_maps:
   - "$alias_database"
