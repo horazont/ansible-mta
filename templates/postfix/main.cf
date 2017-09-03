@@ -75,6 +75,19 @@ smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required else "no" }}
 # origin: mta_strict_rfc821_envelopes
 strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes else "no" }}
 
+# origin: mta_smtpd_restriction_classes
+smtpd_restriction_classes =
+{% for restriction_class in mta_smtpd_restriction_classes.keys() %}
+    {{ restriction_class }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
+{% for restriction_class, restrictions in mta_smtpd_restriction_classes.items() %}
+{{ restriction_class }} =
+{% for restriction in restrictions %}
+    {{ restriction }}{{ "," if not loop.last else "" }}
+{% endfor %}
+{% endfor %}
+
 # origin: mta_smtpd_client_restrictions
 smtpd_client_restrictions =
 {% for restriction in mta_smtpd_client_restrictions %}

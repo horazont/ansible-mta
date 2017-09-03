@@ -31,7 +31,7 @@
   notify:
     - restart postfix
 
-- name: create access database directories
+- name: create policy and access database directories
   file: path="/etc/postfix/{{ item }}"
         state=directory
         mode=0775
@@ -39,6 +39,11 @@
         group=root
   with_items:
     - access.d
+    - policy.d
+    - policy.d/client_restrictions
+    - policy.d/sender_restrictions
+    - policy.d/relay_restrictions
+    - policy.d/recipient_restrictions
 
 - name: update access databases
   template: src=postfix/access
