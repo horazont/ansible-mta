@@ -1,4 +1,4 @@
 ---
-- include: postfix.yml
-- include: opendkim.yml
+- import_tasks: postfix.yml
+- import_tasks: opendkim.yml
   when: mta_dkim | default(False)
