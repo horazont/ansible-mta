@@ -4,13 +4,10 @@
   with_items:
     - opendkim
   tags:
-    - opendkim
     - yum
 
 - name: instanciate config
   template: src=opendkim/opendkim.conf dest=/etc/opendkim.conf
-  tags:
-    - opendkim
   notify:
     - restart opendkim
 
@@ -19,12 +16,8 @@
   with_items:
     - SigningTable
     - KeyTable
-  tags:
-    - opendkim
   notify:
     - restart opendkim
 
 - name: enable and start opendkim
   service: name=opendkim enabled=yes state=started
-  tags:
-    - opendkim
