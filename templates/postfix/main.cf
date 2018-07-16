@@ -132,6 +132,19 @@ smtpd_etrn_restrictions = {{ mta_smtpd_etrn_restrictions | join(",") }}
 {% if mta_domains -%}
 # origin: mta_domains (requires mta_virtual_maps)
 virtual_alias_domains = {{ mta_domains | join(", ") }}
+{% endif %}
+
+{% if mta_virtual_mailbox_domains -%}
+# origin: mta_virtual_mailbox_domains
+virtual_mailbox_domains = {{ mta_virtual_mailbox_domains | join(", ") }}
+{% endif %}
+
+{% if mta_virtual_transport -%}
+# origin: mta_virtual_transport
+virtual_transport = {{ mta_virtual_transport }}
+{% endif %}
+
+{% if mta_domains or mta_virtual_maps -%}
 # origin: mta_virtual_maps
 virtual_alias_maps =
 {% for item in mta_virtual_maps %}
