@@ -100,6 +100,12 @@ smtpd_helo_restrictions =
     {{ restriction }}{{ "," if not loop.last else "" }}
 {% endfor %}
 
+# origin: mta_smtpd_sender_login_maps
+smtpd_sender_login_maps =
+{% for map in mta_smtpd_sender_login_maps %}
+    {{ map }}{{ "," if not loop.last else "" }}
+{% endfor %}
+
 # origin: mta_smtpd_sender_restrictions
 smtpd_sender_restrictions =
 {% for restriction in mta_smtpd_sender_restrictions %}

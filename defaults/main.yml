@@ -9,6 +9,7 @@ mta_relayhost_auth: False
 mta_listen: True
 mta_smtpd_restriction_classes: {}
 mta_smtpd_client_restrictions: []
+mta_smtpd_sender_login_maps: []
 mta_smtpd_sender_restrictions: []
 mta_smtpd_relay_restrictions:
 - reject_unauth_destination
