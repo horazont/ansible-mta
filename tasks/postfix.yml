@@ -27,6 +27,16 @@
   notify:
     - restart postfix
 
+- name: generate additional config files
+  template: src=postfix/config
+            dest=/etc/postfix/{{ item.name }}
+            mode=0600
+            owner=root
+            group=root
+  with_items: "{{ mta_config_files }}"
+  notify:
+    - restart postfix
+
 - name: create policy and access database directories
   file: path="/etc/postfix/{{ item }}"
         state=directory

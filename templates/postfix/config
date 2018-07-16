@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+{% if item.content is mapping %}
+{% for key, value in item.content.items() %}
+{{ key }} = {{ value }}
+{% endfor %}
+{% else %}
+{{ item.content }}
+{% endif %}
