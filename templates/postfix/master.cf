@@ -64,6 +64,20 @@ virtual   unix  -       n       n       -       -       virtual
 lmtp      unix  -       -       n       -       -       lmtp
 anvil     unix  -       -       n       -       1       anvil
 scache    unix  -       -       n       -       1       scache
+
+{% for service in mta_services %}
+{{ service.port }} {{ service.type }}  n       -       n       -       -       {{ service.command }}
+  {% if service.options is defined %}
+    {% for key, value in service.options.items() %}
+      {% if value is sequence and value is not string %}
+  -o {{ key }}={{ value | join(',') }}
+      {% else %}
+  -o {{ key }}={{ value }}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
 #
 # ====================================================================
 # Interfaces to non-Postfix software. Be sure to examine the manual

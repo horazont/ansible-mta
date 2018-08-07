@@ -245,6 +245,24 @@ If you’d like to add further files from another role, install them to
 the ``update include alias file`` handler.  These files will automatically be
 concatenated and installed to ``/etc/postfix/aliases``.
 
+Running additional services
+---------------------------
+
+* ``mta_services`` (list of dictionaries). Each dictionary describes a service
+* that should be added to the ``master.cf``.
+
+  Example::
+
+    mta_services:
+      - port: 5870
+        type: inet
+        command: smtpd
+        options:
+          smtpd_tls_security_level: encrypt
+          smtpd_relay_restrictions:
+            - permit_sasl_authenticated
+            - defer_unauth_destination
+
 Mailman
 -------
 * ``mta_use_mailman`` (bool, default false):  Set this to enable the mailman
