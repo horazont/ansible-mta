@@ -60,4 +60,4 @@ mta_mailman_script_location: /etc/mailman/postfix-to-mailman.py
 mta_message_size_limit: 10240000
 mta_pipe_transports: []
 mta_unverified_recipient_reject_code: 450
-mta_config_files: {}
+mta_config_files: []
