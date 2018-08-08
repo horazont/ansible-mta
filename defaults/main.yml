@@ -45,6 +45,15 @@ mta_msa_smtpd_client_restrictions: []
 mta_msa_sasl_type: False
 mta_msa_sasl_path: False
 mta_msa_dkim: False
+mta_msa_options:
+  smtpd_tls_security_level: "encrypt"
+  smtpd_client_restrictions: []
+  smtpd_recipient_restrictions: []
+  smtpd_helo_restrictions: []
+  smtpd_sender_restrictions: []
+  smtpd_relay_restrictions:
+    - permit_sasl_authenticated
+    - defer_unauth_destination
 
 # OpenDKIM settings
 mta_dkim: False

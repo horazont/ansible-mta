@@ -20,7 +20,7 @@
     - apt
 
 - name: instanciate config files
-  template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }}
+  template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }} lstrip_blocks=yes
   with_items:
     - master.cf
     - main.cf

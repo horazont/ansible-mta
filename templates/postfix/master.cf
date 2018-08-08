@@ -22,12 +22,13 @@ smtp      inet  n       -       n       -       -       smtpd
 
 {% if mta_msa -%}
 submission inet n       -       n       -       -       smtpd
-  -o smtpd_tls_security_level=encrypt
-  -o smtpd_client_restrictions=
-  -o smtpd_recipient_restrictions=
-  -o smtpd_helo_restrictions=
-  -o smtpd_sender_restrictions=
-  -o smtpd_relay_restrictions=permit_sasl_authenticated,defer_unauth_destination
+{% for key, value in mta_msa_options.items() %}
+  {% if value is sequence and value is not string %}
+  -o {{ key }}={{ value | join(',') }}
+  {% else %}
+  -o {{ key }}={{ value }}
+  {% endif %}
+{% endfor %}
 {% if mta_msa_sasl_type and mta_msa_sasl_path %}
   -o smtpd_sasl_auth_enable=yes
   -o smtpd_sasl_type={{ mta_msa_sasl_type }}
