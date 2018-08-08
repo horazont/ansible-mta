@@ -7,6 +7,7 @@ mta_alias_maps:
 mta_relayhost: False
 mta_relayhost_auth: False
 mta_listen: True
+mta_smtpd_upstream_proxy_protocol: ""
 mta_smtpd_restriction_classes: {}
 mta_smtpd_client_restrictions: []
 mta_smtpd_sender_login_maps: []

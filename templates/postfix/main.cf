@@ -69,6 +69,10 @@ smtpd_tls_loglevel = 1
 mynetworks = {{ mta_mynetworks | join(", ") }}
 {% endif %}
 
+{% if mta_smtpd_upstream_proxy_protocol %}
+smtpd_upstream_proxy_protocol = {{ mta_smtpd_upstream_proxy_protocol }}
+{% endif %}
+
 {% if mta_listen -%}
 # origin: mta_smtpd_helo_required
 smtpd_helo_required = {{ "yes" if mta_smtpd_helo_required else "no" }}
