@@ -62,7 +62,7 @@
 
 - name: compile access databases
   command: postmap "{{ '%s:%s'|format(item.item.value.type, item.item.key) }}"
-  when: item | changed
+  when: item is changed
   with_items: "{{ access_database_update.results | default([]) }}"
   notify:
     - reload postfix
@@ -80,7 +80,7 @@
 
 - name: compile alias tables
   command: postalias "{{ '%s:%s'|format(item.item.type, item.item.file) }}"
-  when: item | changed
+  when: item is changed
   with_items: "{{ alias_map_update.results | default([]) }}"
   notify:
     - reload postfix
@@ -97,7 +97,7 @@
 
 - name: compile virtual tables
   command: postmap /etc/postfix/virtual_{{ item.item.domain }}
-  when: item | changed
+  when: item is changed
   with_items: "{{ virtual_map_update.results | default([]) }}"
   notify:
     - reload postfix
@@ -124,7 +124,7 @@
 
 - name: compile transport map
   command: postmap /etc/postfix/transports
-  when: postfix_transport_map | changed
+  when: postfix_transport_map is changed
   tags:
     - postfix_transport_map
 
@@ -138,7 +138,7 @@
 
 - name: compile sasl password map for relaying
   command: postmap "{{ mta_relayhost_auth.mapfile }}"
-  when: password_map | changed
+  when: password_map is changed
   notify:
     - reload postfix
 
@@ -187,7 +187,7 @@
 
 - name: reload firewall
   command: firewall-cmd --reload
-  when: (firewall_rule_copy1|changed) or (firewall_rule_copy2|changed)
+  when: (firewall_rule_copy1 is changed) or (firewall_rule_copy2 is changed)
   tags:
     - firewall
 
