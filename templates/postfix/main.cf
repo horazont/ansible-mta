@@ -216,3 +216,12 @@ message_size_limit = {{ mta_message_size_limit }}
 # origin: mta_unverified_recipient_reject_code
 unverified_recipient_reject_code = {{ mta_unverified_recipient_reject_code }}
 {% endif %}
+
+{% for service in mta_services %}
+  {% if service.transport_config is defined %}
+# origin: mta_services[{{ service.service }}].transport_config
+    {% for key, value in service.transport_config.items() %}
+{{ service.service }}_{{ key }} = {{ value }}
+    {% endfor %}
+  {% endif %}
+{% endfor %}

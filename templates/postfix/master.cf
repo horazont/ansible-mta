@@ -67,7 +67,12 @@ anvil     unix  -       -       n       -       1       anvil
 scache    unix  -       -       n       -       1       scache
 
 {% for service in mta_services %}
-{{ service.port }} {{ service.type }}  n       -       n       -       -       {{ service.command }}
+{{ service.service }} {{ service.type }} {{ service.private | default('-') }} {{ service.unpriv | default('-') }} {{ service.chroot | default('n') }} {{ service.wakeup | default('-') }} {{ service.maxproc | default('-') }} {{ service.command }}
+  {% if service.command_attributes is defined %}
+    {% for key, value in service.command_attributes.items() %}
+  {{ key }}={{ value }}
+    {% endfor %}
+  {% endif %}
   {% if service.options is defined %}
     {% for key, value in service.options.items() %}
       {% if value is sequence and value is not string %}
