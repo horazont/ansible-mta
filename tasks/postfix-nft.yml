@@ -1,0 +1,18 @@
+- name: "postfix: deploy MTA nft config"
+  template:
+    src: nft/mta.conf
+    dest: /etc/nft.d/40-postfix-mta.conf
+    owner: root
+    group: root
+  notify:
+  - reload nft
+
+- name: "postfix: deploy MSA nft config"
+  template:
+    src: nft/msa.conf
+    dest: /etc/nft.d/40-postfix-msa.conf
+    owner: root
+    group: root
+  notify:
+  - reload nft
+  when: mta_msa

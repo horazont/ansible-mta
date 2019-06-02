@@ -174,15 +174,20 @@
   - certificate
 
 - include: postfix-spf-policyd.yml
-  when: "{{ mta_spf }}"
+  when: mta_spf
   tags:
   - postfix
   - postfix-spf
 
 - include: postfix-ferm.yml
-  when: "{{ ferm | default(False) }}"
+  when: "ferm | default(False)"
   tags:
   - ferm
+
+- include: postfix-nft.yml
+  when: "nft | default(False)"
+  tags:
+  - nft
 
 - name: "postfix: start and enable postfix"
   service:
