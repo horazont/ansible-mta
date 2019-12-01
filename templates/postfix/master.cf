@@ -29,12 +29,16 @@ smtp      inet  n       -       n       -       -       smtpd {% call smtpd_args
 {%- endif %}
 
 {% if mta_msa -%}
-submission inet n       -       n       -       -       smtpd
-  -o smtpd_tls_security_level=encrypt
+{% if mta_msa_proxy %}127.0.0.1:1587{% else %}submission{% endif %} inet n       -       n       -       -       smtpd
+{% if not mta_msa_proxy %}
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+{% endif %}
   -o smtpd_recipient_restrictions=$submission_recipient_restrictions
   -o smtpd_helo_restrictions=
   -o smtpd_sender_restrictions=$submission_sender_restrictions
+{% if mta_msa_proxy %}
+  -o smtpd_authorized_xclient_hosts=127.0.0.0/8
+{% endif %}
   -o smtpd_relay_restrictions=permit_sasl_authenticated,defer_unauth_destination
   -o smtpd_sender_login_maps=$submission_sender_login_maps
   -o syslog_name=postfix/submission
@@ -47,10 +51,13 @@ submission inet n       -       n       -       -       smtpd
   -o smtpd_milters=unix:/run/opendkim/opendkim.sock
 {% endif %}
 {% if mta_msa_tls | default(mta_tls) %}
+  -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_cert_file=/etc/postfix/msa.crt
   -o smtpd_tls_key_file=/etc/postfix/msa.key
   -o smtpd_tls_security_level=encrypt
   -o smtpd_tls_auth_only=yes
+{% else %}
+  -o smtpd_lts_security_level=none
 {% endif %}
 {% if mta_msa_privacy %}
   -o cleanup_service_name=privacy-cleanup

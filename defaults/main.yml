@@ -48,6 +48,7 @@ mta_agent_transport_user: "vmail:mail"
 
 # Mail Submission Agent settings
 mta_msa: False
+mta_msa_proxy: False
 mta_msa_smtpd_client_restrictions: []
 mta_msa_sasl_type: False
 mta_msa_sasl_path: False
