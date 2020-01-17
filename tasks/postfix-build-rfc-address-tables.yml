@@ -10,6 +10,6 @@
 
 - name: "rfc addresses: compile table"
   command: "postmap /etc/postfix/maps/rfc-addresses.hash"
-  when: "{{ rfc_table | changed or map_infrastructure | changed }}"
+  when: "{{ rfc_table is changed or map_infrastructure is changed }}"
   notify:
   - reload postfix

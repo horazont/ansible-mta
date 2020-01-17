@@ -27,11 +27,11 @@
   service:
     name: opendkim
     state: stopped
-  when: "{{ service_file | changed }}"
+  when: service_file is changed
 
 - name: reload systemd
   command: systemctl daemon-reload
-  when: "{{ service_file | changed }}"
+  when: service_file is changed
   notify: restart opendkim
 
 - name: create config directory tree

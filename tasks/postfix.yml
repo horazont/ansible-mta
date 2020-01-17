@@ -85,7 +85,7 @@
 
 - name: "postfix: compile sasl password map for relaying"
   command: postmap "{{ mta_relayhost_auth.mapfile }}"
-  when: password_map | changed
+  when: password_map is changed
   notify:
   - reload postfix
 
