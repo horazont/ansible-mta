@@ -4,18 +4,14 @@
 
 
 - name: install packages via yum
-  yum: name={{ item }} state=latest
+  yum: name=postfix state=latest
   when: "ansible_distribution in ['Fedora']"
-  with_items:
-    - postfix
   tags:
     - yum
 
 - name: install packages via apt
-  apt: name={{ item }} state=latest
+  apt: name=postfix state=latest
   when: "ansible_distribution in ['Ubuntu', 'Debian']"
-  with_items:
-    - postfix
   tags:
     - apt
 
