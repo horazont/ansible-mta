@@ -139,6 +139,19 @@ smtpd_etrn_restrictions = {{ mta_smtpd_etrn_restrictions | join(",") }}
 
 {% endif %}
 
+{% if mta_smtpd_milters %}
+smtpd_milters =
+{%- for smtpd_milter in mta_smtpd_milters %}
+  { {{ smtpd_milter.socket }}
+    {%- for key, value in smtpd_milter|dictsort -%}
+      {%- if key != "socket" -%}
+      , {{ key }}={{ value }}
+      {%- endif -%}
+    {%- endfor -%}
+  }{{ "," if not loop.last else "" }}
+{%- endfor -%}
+{% endif %}
+
 {% if mta_domains -%}
 # origin: mta_domains (requires mta_virtual_maps)
 virtual_alias_domains = {{ mta_domains | join(", ") }}
