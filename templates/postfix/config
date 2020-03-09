@@ -2,7 +2,7 @@
 
 {% if item.content is mapping %}
 {% for key, value in item.content.items() %}
-{{ key }} = {{ value }}
+{{ key }} = {{ value | replace("\n"," ") }}
 {% endfor %}
 {% else %}
 {{ item.content }}
