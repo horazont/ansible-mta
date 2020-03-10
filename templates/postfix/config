@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 
 {% if item.content is mapping %}
-{% for key, value in item.content.items() %}
+{% for key, value in item.content|dictsort %}
 {{ key }} = {{ value | replace("\n"," ") }}
 {% endfor %}
 {% else %}

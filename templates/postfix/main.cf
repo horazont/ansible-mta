@@ -81,11 +81,11 @@ strict_rfc821_envelopes = {{ "yes" if mta_strict_rfc821_envelopes else "no" }}
 
 # origin: mta_smtpd_restriction_classes
 smtpd_restriction_classes =
-{% for restriction_class in mta_smtpd_restriction_classes.keys() %}
+{% for restriction_class in mta_smtpd_restriction_classes.keys()|sort %}
     {{ restriction_class }}{{ "," if not loop.last else "" }}
 {% endfor %}
 
-{% for restriction_class, restrictions in mta_smtpd_restriction_classes.items() %}
+{% for restriction_class, restrictions in mta_smtpd_restriction_classes|dictsort %}
 {{ restriction_class }} =
 {% for restriction in restrictions %}
     {{ restriction }}{{ "," if not loop.last else "" }}
@@ -233,7 +233,7 @@ unverified_recipient_reject_code = {{ mta_unverified_recipient_reject_code }}
 {% for service in mta_services %}
   {% if service.transport_config is defined %}
 # origin: mta_services[{{ service.service }}].transport_config
-    {% for key, value in service.transport_config.items() %}
+    {% for key, value in service.transport_config|dictsort %}
 {{ service.service }}_{{ key }} = {{ value }}
     {% endfor %}
   {% endif %}

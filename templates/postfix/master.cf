@@ -22,7 +22,7 @@ smtp      inet  n       -       n       -       -       smtpd
 
 {% if mta_msa -%}
 submission inet n       -       n       -       -       smtpd
-{% for key, value in mta_msa_options.items() %}
+{% for key, value in mta_msa_options|dictsort %}
   {% if value is sequence and value is not string %}
   -o {{ key }}={{ value | join(',') }}
   {% else %}
@@ -69,12 +69,12 @@ scache    unix  -       -       n       -       1       scache
 {% for service in mta_services %}
 {{ service.service }} {{ service.type }} {{ service.private | default('-') }} {{ service.unpriv | default('-') }} {{ service.chroot | default('n') }} {{ service.wakeup | default('-') }} {{ service.maxproc | default('-') }} {{ service.command }}
   {% if service.command_attributes is defined %}
-    {% for key, value in service.command_attributes.items() %}
+    {% for key, value in service.command_attributes|dictsort %}
   {{ key }}={{ value }}
     {% endfor %}
   {% endif %}
   {% if service.options is defined %}
-    {% for key, value in service.options.items() %}
+    {% for key, value in service.options|dictsort %}
       {% if value is sequence and value is not string %}
   -o {{ key }}={{ value | join(',') }}
       {% else %}
