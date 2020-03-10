@@ -31,8 +31,6 @@ mta_tls_log: False
 mta_mynetworks: []
 mta_smtpd_helo_required: False
 mta_strict_rfc821_envelopes: False
-mta_domains: []
-mta_message_size_limit: False
 mta_listen_interfaces:
 - all
 mta_soft_bounce: False
