@@ -69,8 +69,10 @@ scache    unix  -       -       n       -       1       scache
 {% for service in mta_services %}
 {{ service.service }} {{ service.type }} {{ service.private | default('-') }} {{ service.unpriv | default('-') }} {{ service.chroot | default('n') }} {{ service.wakeup | default('-') }} {{ service.maxproc | default('-') }} {{ service.command }}
   {% if service.command_attributes is defined %}
-    {% for key, value in service.command_attributes|dictsort %}
+    {% for command_attribute in service.command_attributes %}
+      {% for key, value in command_attribute|dictsort %}
   {{ key }}={{ value }}
+      {% endfor %}
     {% endfor %}
   {% endif %}
   {% if service.options is defined %}
