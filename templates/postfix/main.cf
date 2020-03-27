@@ -223,6 +223,10 @@ smtp_sasl_security_options =
 {% endif %}
 {% endif %}
 
+{% if mta_recipient_delimiter %}
+recipient_delimiter = {{ mta_recipient_delimiter }}
+{% endif %}
+
 message_size_limit = {{ mta_message_size_limit }}
 
 {% if mta_unverified_recipient_reject_code %}
