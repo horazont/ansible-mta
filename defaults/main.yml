@@ -72,5 +72,8 @@ mta_pipe_transports: []
 mta_unverified_recipient_reject_code: 450
 mta_config_files: []
 
+# Additional parameters
+mta_parameters: []
+
 # Additional services
 mta_services: []

@@ -234,6 +234,21 @@ message_size_limit = {{ mta_message_size_limit }}
 unverified_recipient_reject_code = {{ mta_unverified_recipient_reject_code }}
 {% endif %}
 
+{% for key, value in mta_parameters|dictsort -%}
+  {{ key }}=
+  {%- if value is mapping -%}
+    inline:{ {{ value | dictsort | map('join', ' = ') | map('regex_replace', '^(.*)$', '{ \\1 }') | join(', ') }} }
+  {%- elif value is sequence and not value is string -%}
+    {{ value | join(', ') }}
+  {#- With Jinja 2.11: value is boolean -#}
+  {%- elif value is sameas true or value is sameas false -%}
+    {{ 'yes' if value else 'no' }}
+  {%- else -%}
+    {{ value }}
+  {%- endif -%}
+  {{ '\n' }}
+{%- endfor %}
+
 {% for service in mta_services %}
   {% if service.transport_config is defined %}
 # origin: mta_services[{{ service.service }}].transport_config
