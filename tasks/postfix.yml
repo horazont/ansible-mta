@@ -29,7 +29,7 @@
             mode=0600
             owner=root
             group=root
-  with_items: "{{ mta_config_files }}"
+  with_items: "{{ mta_config_files_all + mta_config_files }}"
   notify:
     - restart postfix
 

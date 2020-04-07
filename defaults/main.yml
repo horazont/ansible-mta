@@ -70,6 +70,7 @@ mta_recipient_delimiter: ""
 mta_message_size_limit: 10240000
 mta_pipe_transports: []
 mta_unverified_recipient_reject_code: 450
+mta_config_files_all: []
 mta_config_files: []
 
 # Additional parameters
