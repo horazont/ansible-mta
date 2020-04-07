@@ -34,6 +34,9 @@ master_service_disable = inet
 {% endif %}
 inet_protocols = all
 
+sender_canonical_maps = {{ mta_sender_canonical_maps | join(", ") }}
+recipient_canonical_maps = {{ mta_recipient_canonical_maps | join(", ") }}
+
 unknown_local_recipient_reject_code = {{ '450' if mta_soft_bounce else '550' }}
 soft_bounce = {{ 'yes' if mta_soft_bounce else 'no' }}
 
