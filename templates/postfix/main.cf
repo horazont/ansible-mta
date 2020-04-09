@@ -1,3 +1,5 @@
+compatibility_level = 2
+
 # configuration
 myhostname = {{ mta_override_hostname | default(inventory_hostname) }}
 myorigin = $myhostname
