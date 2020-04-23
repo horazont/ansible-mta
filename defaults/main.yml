@@ -4,9 +4,10 @@ mta_alias_database: []
 mta_alias_maps:
   - "$alias_database"
   - hash:/etc/postfix/aliases
-mta_sender_canonical_maps: []
-mta_recipient_canonical_maps: []
-mta_canonical_header_checks: []
+mta_local_canonical_myorigin: ""
+mta_local_sender_canonical_maps: []
+mta_local_recipient_canonical_maps: []
+mta_local_canonical_header_checks: []
 mta_relayhost: False
 mta_relayhost_auth: False
 mta_listen: True
