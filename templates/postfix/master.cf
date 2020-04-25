@@ -46,9 +46,9 @@ pickup    unix  n       -       n       60      1       pickup
 local-canonical-cleanup   unix  n       -       n       -       0       cleanup
   -o rewrite_service_name=local-canonical-rewrite
   -o myorigin={{ mta_local_canonical_myorigin }}
-  -o header_checks={{ mta_local_canonical_header_checks | join(', ') }}
-  -o sender_canonical_maps={{ mta_local_sender_canonical_maps | join(', ') }}
-  -o recipient_canonical_maps={{ mta_local_recipient_canonical_maps | join(', ') }}
+  -o { header_checks={{ mta_local_canonical_header_checks | join(', ') }} }
+  -o { sender_canonical_maps={{ mta_local_sender_canonical_maps | join(', ') }} }
+  -o { recipient_canonical_maps={{ mta_local_recipient_canonical_maps | join(', ') }} }
 local-canonical-rewrite   unix  -       -       n       -       -       trivial-rewrite
   -o myorigin={{ mta_local_canonical_myorigin }}
 {% endif %}
@@ -88,12 +88,19 @@ scache    unix  -       -       n       -       1       scache
   {% endif %}
   {% if service.options is defined %}
     {% for key, value in service.options|dictsort %}
-      {% if value is sequence and value is not string %}
-  -o {{ key }}={{ value | join(',') }}
-      {% else %}
-  -o {{ key }}={{ value }}
-      {% endif %}
-    {% endfor %}
+  -o { {{ key }}=
+      {%- if value is mapping -%}
+        inline:{ {{ value | dictsort | map('join', ' = ') | map('regex_replace', '^(.*)$', '{ \\1 }') | join(', ') }} }
+      {%- elif value is sequence and not value is string -%}
+        {{ value | join(', ') }}
+      {#- With Jinja 2.11: value is boolean -#}
+      {%- elif value is sameas true or value is sameas false -%}
+        {{ 'yes' if value else 'no' }}
+      {%- else -%}
+        {{ value }}
+      {%- endif -%}
+      {{ ' }\n' }}
+    {%- endfor %}
   {% endif %}
 {% endfor %}
 
