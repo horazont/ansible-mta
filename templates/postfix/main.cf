@@ -59,7 +59,9 @@ smtpd_tls_exclude_ciphers = EXPORT, LOW
 tls_ssl_options = NO_COMPRESSION
 {% endif %}
 
-smtp_tls_security_level = may
+smtp_tls_wrappermode = {{ "yes" if mta_smtp_tls_wrappermode else "no" }}
+smtp_tls_security_level = {{ mta_smtp_tls_security_level }}
+smtp_tls_CAfile = {{ mta_smtp_tls_ca_file }}
 
 {% if mta_tls_log -%}
 # origin: mta_tls_log

@@ -10,6 +10,9 @@ mta_local_recipient_canonical_maps: []
 mta_local_canonical_header_checks: []
 mta_relayhost: False
 mta_relayhost_auth: False
+mta_smtp_tls_wrappermode: no
+mta_smtp_tls_security_level: "may"
+mta_smtp_tls_ca_file: ""
 mta_listen: True
 mta_smtpd_upstream_proxy_protocol: ""
 mta_smtpd_restriction_classes: {}
