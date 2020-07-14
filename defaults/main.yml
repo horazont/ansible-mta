@@ -81,6 +81,7 @@ mta_config_files_all: []
 mta_config_files: []
 
 # Additional parameters
+mta_parameters_all: {}
 mta_parameters: {}
 
 # Additional services

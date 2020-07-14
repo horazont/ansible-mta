@@ -238,7 +238,7 @@ message_size_limit = {{ mta_message_size_limit }}
 unverified_recipient_reject_code = {{ mta_unverified_recipient_reject_code }}
 {% endif %}
 
-{% for key, value in mta_parameters|dictsort -%}
+{% for key, value in mta_parameters_all|combine(mta_parameters)|dictsort -%}
   {{ key }}=
   {%- if value is mapping -%}
     inline:{ {{ value | dictsort | map('join', ' = ') | map('regex_replace', '^(.*)$', '{ \\1 }') | join(', ') }} }
