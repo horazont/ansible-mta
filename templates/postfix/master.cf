@@ -28,6 +28,11 @@ smtp      inet  n       -       n       -       -       smtpd {% call smtpd_args
 {%- endif %}
 {%- endif %}
 
+{% if mta_dkim_local_signing %}
+2525  inet    n   -   n   -   -   smtpd
+  -o smtpd_milters=unix:/run/opendkim/opendkim.sock
+{% endif %}
+
 {% if mta_msa -%}
 {% if mta_msa_proxy %}127.0.0.1:1587{% else %}submission{% endif %} inet n       -       n       -       -       smtpd
 {% if not mta_msa_proxy %}
