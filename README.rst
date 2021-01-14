@@ -337,6 +337,13 @@ authentication is required on the submission port to allow sending mail.
 
   __ http://www.postfix.org/postconf.5.html#sender_login_maps
 
+* ``mta_msa_proxy`` (boolean, default false): If enabled, configure the MSA
+  to listen at 127.0.0.1:1587 to be used behind a submission proxy (such as
+  dovecot-submission). It will allow hosts from 127.0.0.0/8 to use xclient
+  in order to spoof the source address for further restrictions.
+
+  This also disables authentication, so the proxy has to handle that.
+
 TLS
 ---
 
@@ -367,9 +374,13 @@ Safety nets and misc
 IPTables based traffic accounting
 ---------------------------------
 
-When ferm is used (``ferm`` is set to true), the following switches can be used
-to enable the generation of no-op iptables rules whose packet and bytes counters
-can be used for traffic accounting.
+When ferm or nftables is used (``ferm`` or ``nft`` is set to true), the following
+switches can be used to enable the generation of no-op iptables/nftables rules
+whose packet and bytes counters can be used for traffic accounting.
+
+**Note:** Historically, these switches use ``iptables`` in their name; when nft
+is enabled, nft is of course used. It uses a separate `inet accounting` table
+for that.
 
 * ``mta_iptables_inbound_accounting`` (bool, default false): Add rules to
   account for traffic to and from the local port 25. This effectively tracks
