@@ -31,6 +31,8 @@ mailbox_command = /usr/lib{% if ansible_os_family == "RedHat" %}exec{% endif %}/
 # mta_delivery_type is lmtp
 {% if mta_delivery_agent == "dovecot" %}
 virtual_transport = lmtp:unix:private/dovecot-lmtp
+{% elif mta_delivery_agent == "custom" %}
+{% call string_list(mta_custom_delivery_agent_local_recipient_maps) %}local_recipient_maps{% endcall %}
 {% endif %}
 {% else %}
 # mta_delivery_type is agent_transport
