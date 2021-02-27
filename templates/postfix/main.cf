@@ -96,8 +96,16 @@ relay_domains = {{ mta_relay_domains | sort | join(',\n    ') }}
 {% if mta_listen and mta_tls %}
 # origin: mta_listen (requires mta_tls, which is used here)
 smtpd_use_tls = yes
+{% if mta_tls_cert_file %}
+smtpd_tls_cert_file = {{ mta_tls_cert_file }}
+{% else %}
 smtpd_tls_cert_file = /etc/postfix/mta.crt
+{% endif %}
+{% if mta_tls_key_file %}
+smtpd_tls_cert_file = {{ mta_tls_key_file }}
+{% else %}
 smtpd_tls_key_file = /etc/postfix/mta.key
+{% endif %}
 smtpd_tls_security_level = may
 smtpd_tls_exclude_ciphers = EXPORT, LOW
 {% endif %}

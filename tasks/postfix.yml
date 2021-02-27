@@ -96,7 +96,7 @@
     owner: root
     group: root
     mode: ugo=r
-  when: mta_listen and mta_tls
+  when: mta_listen and mta_tls and not mta_tls_cert_file
   notify:
   - reload postfix
   tags:
@@ -109,7 +109,7 @@
     owner: root
     group: root
     mode: u=r,go-rwx
-  when: mta_listen and mta_tls
+  when: mta_listen and mta_tls and not mta_tls_key_file
   notify:
   - reload postfix
   tags:
@@ -123,7 +123,7 @@
     owner: root
     group: root
     mode: u=r,go-rwx
-  when: "{{ mta_msa and mta_msa_tls and not mta_msa_tls_cert_file }}"
+  when: "mta_msa and mta_msa_tls and not mta_msa_tls_cert_file"
   notify:
   - reload postfix
   tags:
@@ -138,7 +138,7 @@
     owner: root
     group: root
     mode: u=r,go-rwx
-  when: "{{ mta_msa and mta_msa_tls and not not mta_msa_tls_cert_file }}"
+  when: "mta_msa and mta_msa_tls and not not mta_msa_tls_cert_file"
   notify:
   - reload postfix
   tags:

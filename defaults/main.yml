@@ -16,6 +16,8 @@ mta_delay_warning: False
 mta_tls: True
 mta_tls_security_level: "may"
 mta_tls_log: False
+mta_tls_cert_file: null
+mta_tls_key_file: null
 mta_mynetworks: []
 mta_smtpd_helo_required: False
 mta_strict_rfc821_envelopes: False
