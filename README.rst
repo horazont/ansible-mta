@@ -108,16 +108,16 @@ Accepting mail
   directly; it will typically be used for MTAs that only need to send cron mails
   etc.
 
-* ``mta_relayhost_auth`` (mapping): This is only meaningful if
-  ``mta_relayhost`` is set. In that case, this mapping allows to set up
-  authentication with the relay host using SASL:
+* ``mta_relayhost_auth_username`` (string): This is only meaningful
+  if ``mta_relayhost`` is set. In that case this set the SASL user name to use
+  to set up authentication with the relay host using SASL.
 
-  * ``mta_relayhost_auth.username`` (string): the SASL user name to use
-  * ``mta_relayhost_auth.mapfile`` (path): A path where a config file
-    containing the credentials will be written to.
+* ``mta_relayhost_auth_password`` (string): The password to use for relayhost SASL
+  authentication. Required if ``mta_relayhost_auth_username`` is used.
 
-* ``mta_relayhost_password`` (string): The password to use for relayhost SASL
-  authentication. Required if ``mta_relayhost_auth`` is used.
+* ``mta_relayhost_auth_mapfile`` (path): A path where a config file containing
+  the SASL authentication credentials will be written to.
+
 
 * ``mta_transport_map`` (mapping):  A lookup table, mapping destination
   address patterns to their respective nexthop.  Refer to the `postfix

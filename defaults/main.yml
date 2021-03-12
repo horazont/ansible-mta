@@ -9,7 +9,8 @@ mta_local_sender_canonical_maps: []
 mta_local_recipient_canonical_maps: []
 mta_local_canonical_header_checks: []
 mta_relayhost: False
-mta_relayhost_auth: False
+mta_relayhost_auth_username: null
+mta_relayhost_auth_mapfile: /etc/postfix/password_map
 mta_smtp_tls_wrappermode: no
 mta_smtp_tls_security_level: "may"
 mta_smtp_tls_ca_file: ""

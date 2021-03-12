@@ -126,14 +126,14 @@
 
 - name: deploy sasl password map for relaying
   template: src=postfix/password_map
-            dest="{{ mta_relayhost_auth.mapfile }}"
-  when: mta_relayhost and mta_relayhost_auth
+            dest="{{ mta_relayhost_auth_mapfile }}"
+  when: mta_relayhost and mta_relayhost_auth_username
   register: password_map
   notify:
     - reload postfix
 
 - name: compile sasl password map for relaying
-  command: postmap "{{ mta_relayhost_auth.mapfile }}"
+  command: postmap "{{ mta_relayhost_auth_mapfile }}"
   when: password_map is changed
   notify:
     - reload postfix

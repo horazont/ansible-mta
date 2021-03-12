@@ -218,10 +218,10 @@ delay_warning_time = {{ mta_delay_warning }}
 {% if mta_relayhost -%}
 # origin: mta_relayhost
 relayhost = {{ mta_relayhost }}
-{% if mta_relayhost_auth -%}
-# origin: mta_relayhost and mta_relayhost_auth
+{% if mta_relayhost_auth_username and mta_relayhost_auth_password -%}
+# origin: mta_relayhost and mta_relayhost_auth_mapfile
 smtp_sasl_auth_enable = yes
-smtp_sasl_password_maps = hash:{{ mta_relayhost_auth.mapfile }}
+smtp_sasl_password_maps = hash:{{ mta_relayhost_auth_mapfile }}
 smtp_sasl_mechanism_filter =
 smtp_sasl_security_options =
 {% endif %}
