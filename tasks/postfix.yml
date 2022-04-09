@@ -15,6 +15,17 @@
   tags:
     - apt
 
+- name: discover default configuration values
+  command: postconf -d
+  register: _postfix_config_defaults
+  changed_when: False
+  check_mode: no
+
+- set_fact:
+    postfix_config_defaults: "{{ dict(  _postfix_config_defaults.stdout_lines
+                                      | map('regex_replace', '^(\\w+ =)$', '\\1 ')
+                                      | map('split', ' = ', 1)) }}"
+
 - name: instanciate config files
   template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }} lstrip_blocks=yes
   with_items:
