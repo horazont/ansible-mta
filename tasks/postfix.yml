@@ -3,31 +3,23 @@
 #   command: hostnamectl --static set-hostname {{ inventory_hostname }}
 
 
-- name: install packages via yum
-  yum: name=postfix state=latest
-  when: "ansible_distribution in ['Fedora']"
-  tags:
-    - yum
-
-- name: install packages via apt
-  apt: name=postfix state=latest
-  when: "ansible_distribution in ['Ubuntu', 'Debian']"
-  tags:
-    - apt
+- name: install packages
+  ansible.builtin.package: name=postfix state=present
 
 - name: discover default configuration values
-  command: postconf -d
+  ansible.builtin.command: postconf -d
   register: _postfix_config_defaults
-  changed_when: False
-  check_mode: no
+  changed_when: false
+  check_mode: false
 
-- set_fact:
+- name: register default configuration values
+  ansible.builtin.set_fact:
     postfix_config_defaults: "{{ dict(  _postfix_config_defaults.stdout_lines
                                       | map('regex_replace', '^(\\w+ =)$', '\\1 ')
                                       | map('split', ' = ', 1)) }}"
 
 - name: instanciate config files
-  template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }} lstrip_blocks=yes
+  ansible.builtin.template: dest=/etc/postfix/{{ item }} src=postfix/{{ item }} lstrip_blocks=yes
   with_items:
     - master.cf
     - main.cf
@@ -35,7 +27,7 @@
     - restart postfix
 
 - name: generate additional config files
-  template: src=postfix/config
+  ansible.builtin.template: src=postfix/config
             dest=/etc/postfix/{{ item.name }}
             mode=0600
             owner=root
@@ -45,7 +37,7 @@
     - restart postfix
 
 - name: create policy and access database directories
-  file: path="/etc/postfix/{{ item }}"
+  ansible.builtin.file: path="/etc/postfix/{{ item }}"
         state=directory
         mode=0755
         owner=root
@@ -59,7 +51,7 @@
     - policy.d/recipient_restrictions
 
 - name: update access databases
-  template: src=postfix/access
+  ansible.builtin.template: src=postfix/access
             dest={{ item.key }}
             mode="{{ item.mode | default('0664') }}"
             owner={{ item.owner | default("root") }}
@@ -68,14 +60,14 @@
   register: access_database_update
 
 - name: compile access databases
-  command: postmap "{{ '%s:%s'|format(item.item.value.type, item.item.key) }}"
+  ansible.builtin.command: postmap "{{ '%s:%s'|format(item.item.value.type, item.item.key) }}"
   when: item is changed
   with_items: "{{ access_database_update.results | default([]) }}"
   notify:
     - reload postfix
 
 - name: update alias tables
-  template: src=postfix/aliases
+  ansible.builtin.template: src=postfix/aliases
             dest={{ item.file }}
             mode="{{ item.mode | default('0664') }}"
             owner={{ item.owner | default("root") }}
@@ -86,7 +78,7 @@
   register: alias_map_update
 
 - name: compile alias tables
-  command: postalias "{{ '%s:%s'|format(item.item.type, item.item.file) }}"
+  ansible.builtin.command: postalias "{{ '%s:%s'|format(item.item.type, item.item.file) }}"
   when: item is changed
   with_items: "{{ alias_map_update.results | default([]) }}"
   notify:
@@ -95,7 +87,7 @@
     - postfix_virtual_map
 
 - name: update virtual tables
-  template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
+  ansible.builtin.template: src=postfix/virtual dest=/etc/postfix/virtual_{{ item.domain }}
   when: item is mapping
   with_items: "{{ mta_virtual_maps | default(omit) }}"
   tags:
@@ -103,7 +95,7 @@
   register: virtual_map_update
 
 - name: compile virtual tables
-  command: postmap /etc/postfix/virtual_{{ item.item.domain }}
+  ansible.builtin.command: postmap /etc/postfix/virtual_{{ item.item.domain }}
   when: item is changed
   with_items: "{{ virtual_map_update.results | default([]) }}"
   notify:
@@ -112,31 +104,31 @@
     - postfix_virtual_map
 
 - name: create alias include dir
-  file: path=/etc/postfix/aliases.d/ state=directory
+  ansible.builtin.file: path=/etc/postfix/aliases.d/ state=directory
 
 - name: create placeholder file
-  copy: dest=/etc/postfix/aliases.d/placeholder.aliases content=""
+  ansible.builtin.copy: dest=/etc/postfix/aliases.d/placeholder.aliases content=""
 
 - name: force alias includer generation at this point
-  command: /bin/true
+  ansible.builtin.command: /bin/true
   notify:
     - update include alias file
 
 - name: update transport map
-  template: src=postfix/transport_map dest=/etc/postfix/transports
+  ansible.builtin.template: src=postfix/transport_map dest=/etc/postfix/transports
   when: mta_transport_map is mapping
   tags:
     - postfix_transport_map
   register: postfix_transport_map
 
 - name: compile transport map
-  command: postmap /etc/postfix/transports
+  ansible.builtin.command: postmap /etc/postfix/transports
   when: postfix_transport_map is changed
   tags:
     - postfix_transport_map
 
 - name: deploy sasl password map for relaying
-  template: src=postfix/password_map
+  ansible.builtin.template: src=postfix/password_map
             dest="{{ mta_relayhost_auth_mapfile }}"
   when: mta_relayhost and mta_relayhost_auth_username
   register: password_map
@@ -144,38 +136,38 @@
     - reload postfix
 
 - name: compile sasl password map for relaying
-  command: postmap "{{ mta_relayhost_auth_mapfile }}"
+  ansible.builtin.command: postmap "{{ mta_relayhost_auth_mapfile }}"
   when: password_map is changed
   notify:
     - reload postfix
 
 - name: upload certificate
-  copy: content="{{ mta_tls_cert }}"
+  ansible.builtin.copy: content="{{ mta_tls_cert }}"
         dest=/etc/postfix/ssl.crt
         owner=root
         group=root
         mode=0444
-  when: mta_tls_cert | default(False)
+  when: mta_tls_cert | default(false)
   notify:
-  - reload postfix
+    - reload postfix
   tags:
-  - certificate
+    - certificate
 
 - name: upload key
-  copy: content="{{ mta_tls_key }}"
+  ansible.builtin.copy: content="{{ mta_tls_key }}"
         dest=/etc/postfix/ssl.key
         owner=root
         group=root
         mode=0400
-  when: mta_tls_key | default(False)
+  when: mta_tls_key | default(false)
   notify:
-  - reload postfix
+    - reload postfix
   tags:
-  - certificate
-  - requires-secret
+    - certificate
+    - requires-secret
 
 - name: setup core firewall service files
-  copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
+  ansible.builtin.copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   with_items:
     - smtpd
   when: ansible_distribution in ['Fedora']
@@ -184,7 +176,7 @@
     - firewall
 
 - name: setup submission firewall service files
-  copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
+  ansible.builtin.copy: src=firewalld/{{ item }}.xml dest=/etc/firewalld/services/
   when: mta_msa and ansible_distribution in ['Fedora']
   with_items:
     - submission
@@ -193,13 +185,13 @@
     - firewall
 
 - name: reload firewall
-  command: firewall-cmd --reload
+  ansible.builtin.command: firewall-cmd --reload
   when: (firewall_rule_copy1 is changed) or (firewall_rule_copy2 is changed)
   tags:
     - firewall
 
 - name: enable core services in firewall
-  command: firewall-cmd --permanent --zone=public --add-service={{ item }}
+  ansible.builtin.command: firewall-cmd --permanent --zone=public --add-service={{ item }}
   when: ansible_distribution in ['Fedora']
   with_items:
     - smtpd
@@ -207,7 +199,7 @@
     - firewall
 
 - name: enable submission in firewall
-  command: firewall-cmd --permanent --zone=public --add-service={{ item }}
+  ansible.builtin.command: firewall-cmd --permanent --zone=public --add-service={{ item }}
   when: mta_msa and ansible_distribution in ['Fedora']
   with_items:
     - submission
@@ -215,4 +207,4 @@
     - firewall
 
 - name: start and enable postfix
-  service: name=postfix state=started enabled=yes
+  ansible.builtin.service: name=postfix state=started enabled=yes

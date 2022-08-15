@@ -8,20 +8,20 @@ mta_local_canonical_myorigin: ""
 mta_local_sender_canonical_maps: []
 mta_local_recipient_canonical_maps: []
 mta_local_canonical_header_checks: []
-mta_relayhost: False
+mta_relayhost: false
 mta_relayhost_auth_username: null
 mta_relayhost_auth_mapfile: /etc/postfix/password_map
-mta_smtp_tls_wrappermode: no
+mta_smtp_tls_wrappermode: false
 mta_smtp_tls_security_level: "may"
 mta_smtp_tls_ca_file: ""
-mta_listen: True
+mta_listen: true
 mta_smtpd_upstream_proxy_protocol: ""
 mta_smtpd_restriction_classes: {}
 mta_smtpd_client_restrictions: []
 mta_smtpd_sender_login_maps: []
 mta_smtpd_sender_restrictions: []
 mta_smtpd_relay_restrictions:
-- reject_unauth_destination
+  - reject_unauth_destination
 mta_smtpd_recipient_restrictions: []
 mta_smtpd_helo_restrictions: []
 mta_smtpd_data_restrictions: []
@@ -31,27 +31,27 @@ mta_smtpd_milters: []
 mta_domains: []
 mta_virtual_mailbox_domains: []
 mta_virtual_transport: []
-mta_postscreen: False
-mta_delay_warning: False
+mta_postscreen: false
+mta_delay_warning: false
 mta_transport_map: {}
 mta_tls_security_level: "may"
-mta_tls_log: False
+mta_tls_log: false
 mta_mynetworks: []
-mta_smtpd_helo_required: False
-mta_strict_rfc821_envelopes: False
+mta_smtpd_helo_required: false
+mta_strict_rfc821_envelopes: false
 mta_listen_interfaces:
-- all
-mta_soft_bounce: False
+  - all
+mta_soft_bounce: false
 mta_relay_domains: []
 mta_virtual_maps: []
 mta_mailbox_command: null
 
 # Mail Submission Agent settings
-mta_msa: False
+mta_msa: false
 mta_msa_smtpd_client_restrictions: []
-mta_msa_sasl_type: False
-mta_msa_sasl_path: False
-mta_msa_dkim: False
+mta_msa_sasl_type: false
+mta_msa_sasl_path: false
+mta_msa_dkim: false
 mta_msa_options:
   smtpd_tls_security_level: "encrypt"
   smtpd_client_restrictions: []
@@ -63,14 +63,14 @@ mta_msa_options:
     - defer_unauth_destination
 
 # OpenDKIM settings
-mta_dkim: False
-mta_dkim_sign: False
-mta_dkim_verify: True
+mta_dkim: false
+mta_dkim_sign: false
+mta_dkim_verify: true
 mta_dkim_selector: "deployment"
 mta_dkim_domains: []
 
 # Mailman settings
-mta_use_mailman: False
+mta_use_mailman: false
 mta_mailman_script_location: /etc/mailman/postfix-to-mailman.py
 
 # other

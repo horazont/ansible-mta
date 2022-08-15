@@ -1,24 +1,24 @@
 ---
 - name: reload postfix
-  service: name=postfix state=reloaded
+  ansible.builtin.service: name=postfix state=reloaded
 
 - name: restart postfix
-  service: name=postfix state=restarted
+  ansible.builtin.service: name=postfix state=restarted
 
 - name: update include alias file
-  command: find /etc/postfix/aliases.d -type f -name '*.aliases'
+  ansible.builtin.command: find /etc/postfix/aliases.d -type f -name '*.aliases'
   register: alias_files
   notify:
     - really update include alias file
 
 - name: really update include alias file
-  shell: cat {{ alias_files.stdout_lines | join(' ') }} > /etc/postfix/aliases
+  ansible.builtin.shell: cat {{ alias_files.stdout_lines | join(' ') }} > /etc/postfix/aliases
   when: '" ".join(alias_files.stdout_lines)'
   notify:
     - compile include alias file
 
 - name: compile include alias file
-  command: postalias /etc/postfix/aliases
+  ansible.builtin.command: postalias /etc/postfix/aliases
 
 - name: restart opendkim
-  service: name=opendkim state=restarted
+  ansible.builtin.service: name=opendkim state=restarted

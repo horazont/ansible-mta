@@ -1,18 +1,18 @@
 ---
 - name: install packages
-  yum: name={{ item }} state=latest
+  ansible.builtin.yum: name={{ item }} state=present
   with_items:
     - opendkim
   tags:
     - yum
 
 - name: instanciate config
-  template: src=opendkim/opendkim.conf dest=/etc/opendkim.conf
+  ansible.builtin.template: src=opendkim/opendkim.conf dest=/etc/opendkim.conf
   notify:
     - restart opendkim
 
 - name: instanciate tables
-  template: src=opendkim/{{ item }} dest=/etc/opendkim/
+  ansible.builtin.template: src=opendkim/{{ item }} dest=/etc/opendkim/
   with_items:
     - SigningTable
     - KeyTable
@@ -20,4 +20,4 @@
     - restart opendkim
 
 - name: enable and start opendkim
-  service: name=opendkim enabled=yes state=started
+  ansible.builtin.service: name=opendkim enabled=yes state=started
