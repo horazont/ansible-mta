@@ -12,6 +12,6 @@
 - name: "hash: compile table"
   command: "\"{{ 'postalias' if item.item.type == 'alias-hash' else 'postmap' }}\" \"{{ item.item.path | default('/etc/postfix/maps/'+(item.item.name|default(''))) }}\""
   with_items: "{{ tables.results | default([]) }}"
-  when: "{{ item is changed or map_infrastructure is changed }}"
+  when: "item is changed or map_infrastructure is changed"
   notify:
   - reload postfix

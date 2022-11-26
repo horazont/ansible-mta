@@ -135,9 +135,6 @@
     src: "{{ mta_msa_tls_cert_file }}"
     dest: /etc/postfix/msa.crt
     force: yes
-    owner: root
-    group: root
-    mode: u=r,go-rwx
   when: "mta_msa and mta_msa_tls and not not mta_msa_tls_cert_file"
   notify:
   - reload postfix
@@ -151,7 +148,7 @@
     owner: root
     group: root
     mode: u=r,go-rwx
-  when: "{{ mta_msa and mta_msa_tls and not mta_msa_tls_key_file }}"
+  when: "mta_msa and mta_msa_tls and not mta_msa_tls_key_file"
   notify:
   - reload postfix
   tags:
@@ -164,10 +161,7 @@
     src: "{{ mta_msa_tls_key_file }}"
     dest: /etc/postfix/msa.key
     force: yes
-    owner: root
-    group: root
-    mode: u=r,go-rwx
-  when: "{{ mta_msa and mta_msa_tls and not not mta_msa_tls_key_file }}"
+  when: "mta_msa and mta_msa_tls and not not mta_msa_tls_key_file"
   notify:
   - reload postfix
   tags:
