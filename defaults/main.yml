@@ -60,8 +60,8 @@ mta_msa_privacy_strip_headers:
 - X-Enigmail
 - X-Originating-IP
 - User-Agent
-mta_msa_cert_file: False
-mta_msa_key_file: False
+mta_msa_tls_cert_file: null
+mta_msa_tls_key_file: null
 mta_msa_recipient_restrictions: []
 mta_msa_sender_restrictions: []
 mta_msa_sender_login_maps: []
